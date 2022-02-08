@@ -48,7 +48,7 @@ ingress:
     #cert-manager.io/issuer: letsencrypt-nginx
 
   hosts:
-    - host: jwt.sonam.cloud
+    - host: jwt-rest-service.sonam.cloud
       paths:
         - path: /
           pathType: Prefix
@@ -89,12 +89,12 @@ health:
   liveness:
     path: /api/health/liveness
     port: 8080
-    initialDelaySeconds: 60
+    initialDelaySeconds: 15
     periodSeconds: 5
     failureThreshold: 5
   readiness:
     path: /api/health/readiness
     port: 8080
-    initialDelaySeconds: 60
+    initialDelaySeconds: 15
     periodSeconds: 5
     failureThreshold: 5
