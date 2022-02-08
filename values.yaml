@@ -5,8 +5,6 @@
 replicaCount: 1
 
 image:
-  repository: imageregistry.sonam.me/email-rest-service
-  tag: "1.1"
   pullPolicy: Always
 
 imagePullSecrets:
@@ -50,7 +48,7 @@ ingress:
     #cert-manager.io/issuer: letsencrypt-nginx
 
   hosts:
-    - host: email-api.sonam.cloud
+    - host: jwt.sonam.cloud
       paths:
         - path: /
           pathType: Prefix
@@ -81,8 +79,6 @@ tolerations: []
 affinity: {}
 
 envs:
-  - name: SPRING_PROFILES_ACTIVE
-    value: "prod"
 
 health:
   liveness:

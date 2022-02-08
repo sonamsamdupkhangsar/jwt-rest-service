@@ -1,4 +1,4 @@
-package me.sonam.temp;
+package me.sonam.jwt;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

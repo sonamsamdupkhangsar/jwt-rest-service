@@ -16,3 +16,7 @@ management:
 
 server:
   port: 8080
+
+jwt:
+  secret: ${jwt.secret}
+  issuer: ${jwt.issuer}
