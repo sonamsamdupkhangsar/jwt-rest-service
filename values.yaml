@@ -5,8 +5,6 @@
 replicaCount: 1
 
 image:
-  repository: imageregistry.sonam.me/email-rest-service
-  tag: "1.1"
   pullPolicy: Always
 
 imagePullSecrets:
@@ -50,7 +48,7 @@ ingress:
     #cert-manager.io/issuer: letsencrypt-nginx
 
   hosts:
-    - host: email-api.sonam.cloud
+    - host: jwt-rest-service.sonam.cloud
       paths:
         - path: /
           pathType: Prefix
@@ -81,19 +79,22 @@ tolerations: []
 affinity: {}
 
 envs:
-  - name: SPRING_PROFILES_ACTIVE
-    value: "prod"
+  - name: JWT_ISSUER
+    value: ""
+  - name: JWT_SECRET
+    value: ""
+
 
 health:
   liveness:
     path: /api/health/liveness
     port: 8080
-    initialDelaySeconds: 60
+    initialDelaySeconds: 15
     periodSeconds: 5
     failureThreshold: 5
   readiness:
     path: /api/health/readiness
     port: 8080
-    initialDelaySeconds: 60
+    initialDelaySeconds: 15
     periodSeconds: 5
     failureThreshold: 5
