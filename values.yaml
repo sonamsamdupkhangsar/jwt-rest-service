@@ -48,7 +48,7 @@ ingress:
     #cert-manager.io/issuer: letsencrypt-nginx
 
   hosts:
-    - host: jwt-api.sonam.cloud
+    - host: jwt.sonam.cloud
       paths:
         - path: /
           pathType: Prefix
@@ -79,6 +79,7 @@ tolerations: []
 affinity: {}
 
 envs:
+
 
 health:
   liveness:

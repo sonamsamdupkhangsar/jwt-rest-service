@@ -30,3 +30,6 @@ Test jwt api using using swagger-ui at http://localhost:8080/swagger-ui.html
 
 ## Installation on Kubernetes
 Use a Helm chart such as my one here @ [sonam-helm-chart](https://github.com/sonamsamdupkhangsar/sonam-helm-chart):
+
+```helm install jwtapi sonam/mychart -f values.yaml --version 0.1.12 --namespace=backend```
+
