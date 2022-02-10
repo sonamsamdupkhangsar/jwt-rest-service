@@ -33,3 +33,15 @@ Use a Helm chart such as my one here @ [sonam-helm-chart](https://github.com/son
 
 ```helm install jwtapi sonam/mychart -f values.yaml --version 0.1.12 --namespace=backend```
 
+For dry run:
+```
+helm upgrade --install --timeout 5m0s \
+            --set "image.repository=registry/jwt-rest-service" \
+            --set "image.tag=1" \
+            --set "project=jwt-rest-service" \
+            --set "envs[0].name=JWT_SECRET" --set "envs[0].value=hello" \
+            --set "envs[1].name=JWT_ISSUER" --set "envs[1].value=world" \
+             jwt-rest-service \
+            sonam/mychart -f values-backend.yaml --version 0.1.13 --namespace=backend --dry-run
+```
+

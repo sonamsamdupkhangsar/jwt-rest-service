@@ -44,8 +44,8 @@ jobs:
             --set "image.repository=${{ secrets.IMAGEREGISTRY }}/$PROJECT_NAME" \
             --set "image.tag=1" \
             --set "project=$PROJECT_NAME" \
-            --set "envs.JWT_SECRET=${{ secrets.JWT_SECRET }}" \
-            --set "envs.JWT_ISSUER=${{ secrets.JWT_ISSUER }}" \
+            --set "envs[0].name=JWT_SECRET" --set "envs[0].value=${{ secrets.JWT_SECRET }}" \
+            --set "envs[1].name=JWT_ISSUER" --set "envs[1].value=${{ secrets.JWT_ISSUER }}" \
              $PROJECT_NAME \
             sonam/mychart -f values-backend.yaml --version 0.1.13 --namespace=backend
 

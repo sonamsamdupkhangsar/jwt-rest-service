@@ -78,13 +78,6 @@ tolerations: []
 
 affinity: {}
 
-#envs:
-#  - name: JWT_ISSUER
-#    value: ""
-#  - name: JWT_SECRET
-#    value: ""
-
-
 health:
   liveness:
     path: /api/health/liveness
