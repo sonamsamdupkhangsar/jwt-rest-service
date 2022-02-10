@@ -2,7 +2,7 @@ logging:
   level:
     root: error
     me:
-      sonam: warn
+      sonam: info
 info:
   app:
     name: Springboot me.sonam.Application
