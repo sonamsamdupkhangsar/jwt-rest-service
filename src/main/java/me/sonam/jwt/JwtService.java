@@ -29,8 +29,6 @@ public class JwtService implements Jwt {
 
     @Override
     public Mono<String> create(String subject, String audience, int calendarField, int calendarValue) {
-        LOG.info("secret: {}, issuer: {}", secret, issuer);
-
         Calendar calendar = Calendar.getInstance();
         calendar.add(calendarField, calendarValue);
         Date expireDate = calendar.getTime();
