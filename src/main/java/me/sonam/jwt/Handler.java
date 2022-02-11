@@ -22,6 +22,8 @@ public class Handler  {
     @Autowired
     private Jwt jwt;
 
+    private final String bearer = "Bearer: ";
+
     /**
      * outline only
      */
@@ -45,6 +47,15 @@ public class Handler  {
 
     public Mono<ServerResponse> validate(ServerRequest serverRequest) {
         return jwt.validate(serverRequest.pathVariable("jwt"))
+                .flatMap(map -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(map));
+
+    }
+
+    public Mono<ServerResponse> validateHeader(ServerRequest serverRequest) {
+        LOG.info("processing jwt from header: {}", serverRequest.headers().firstHeader("Authorization"));
+        return jwt.validate(serverRequest.headers().firstHeader("Authorization").replace(bearer, ""))
                 .flatMap(map -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(map));

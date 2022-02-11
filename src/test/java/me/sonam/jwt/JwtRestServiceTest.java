@@ -87,7 +87,31 @@ public class JwtRestServiceTest {
                                 assertThat(map.get("subject")).isEqualTo(subject);
                                 LOG.info("verfied claims");
                             }).verifyComplete();
+
+                    LOG.info("set jwt header for Authorization bearer token");
+                    fluxExchangeResult = client.get().uri("/validate")
+                            .headers(httpHeaders -> httpHeaders.setBearerAuth(s.get("token").toString()))
+                            .accept(MediaType.APPLICATION_JSON)
+                            .exchange().expectStatus().isOk()
+                            .returnResult(Map.class);
+
+                    StepVerifier.create(fluxExchangeResult.getResponseBody())
+                            .assertNext(map -> {
+                                LOG.info("audience: {}", map.get("audience"));
+                                assertThat(map.get("audience")).isEqualTo(audience);
+
+                                LOG.info("issuer: {}", map.get("issuer"));
+                                assertThat(map.get("issuer")).isEqualTo(issuer);
+
+                                LOG.info("id: {}", map.get("id"));
+                                assertThat(map.get("id")).isNotNull();
+
+                                LOG.info("issuer: {}", map.get("issuer"));
+                                assertThat(map.get("subject")).isEqualTo(subject);
+                                LOG.info("verfied claims");
+                            }).verifyComplete();
                 });
     }
+
 
 }

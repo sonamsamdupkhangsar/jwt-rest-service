@@ -49,7 +49,7 @@ public class JwtService implements Jwt {
     @Override
     public Mono<Map<String, String>> validate(String jwt) {
         if (jwt != null) {
-            LOG.debug("token is not null {}");
+            LOG.debug("token is not null");
 
             Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwt.replace(TOKEN_PREFIX, ""))
                     .getBody();
@@ -62,7 +62,7 @@ public class JwtService implements Jwt {
 
             Date expirationDate = claims.getExpiration();
             if (expirationDate == null) {
-                LOG.info("no expiration date, consider valid");
+                LOG.info("no expiration date, jwt is valid");
                 return Mono.just(map);
             }
             else {
@@ -70,7 +70,7 @@ public class JwtService implements Jwt {
                 Date currentDate = calendar.getTime();
 
                 if (currentDate.before(expirationDate)) {
-                    LOG.debug("token not expired");
+                    LOG.debug("jwt is valid");
                     return Mono.just(map);
                 } else {
                     LOG.debug("token has expired, ask user to renew");
