@@ -61,4 +61,12 @@ public class Handler  {
                         .bodyValue(map));
 
     }
+
+    public Mono<ServerResponse> hello(ServerRequest serverRequest) {
+        LOG.info("processing hello, checking header: {}", serverRequest.headers().firstHeader("Authorization"));
+        return ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue("Hello");
+
+    }
 }

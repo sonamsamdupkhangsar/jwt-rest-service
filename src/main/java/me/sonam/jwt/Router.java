@@ -74,6 +74,8 @@ public class Router {
                 .andRoute(GET("/validate/{jwt}").and(accept(MediaType.APPLICATION_JSON)),
                         handler::validate)
                 .andRoute(GET("/validate").and(accept(MediaType.APPLICATION_JSON)),
-                        handler::validateHeader);
+                        handler::validateHeader)
+                .andRoute(GET("/hello").and(accept(MediaType.APPLICATION_JSON)),
+                    handler::hello);
     }
 }

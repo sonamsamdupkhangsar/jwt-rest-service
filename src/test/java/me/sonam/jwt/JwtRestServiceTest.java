@@ -50,6 +50,7 @@ public class JwtRestServiceTest {
                     assertThat(map.get("token")).isNotNull();
                 }).verifyComplete();
 
+        client.get().uri("/hello").exchange().expectStatus().isOk();
     }
 
     @Test
