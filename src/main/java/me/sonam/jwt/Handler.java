@@ -23,7 +23,6 @@ public class Handler  {
     private Jwt jwt;
 
     private final String bearer = "Bearer: ";
-
     /**
      * outline only
      */
@@ -62,11 +61,4 @@ public class Handler  {
 
     }
 
-    public Mono<ServerResponse> hello(ServerRequest serverRequest) {
-        LOG.info("processing hello, checking header: {}", serverRequest.headers().firstHeader("Authorization"));
-        return ServerResponse.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue("Hello");
-
-    }
 }

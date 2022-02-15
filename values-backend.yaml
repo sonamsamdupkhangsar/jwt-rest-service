@@ -44,9 +44,6 @@ istio:
 ingress:
   enabled: true
   ingressClass: nginx
-  #annotations:
-    #cert-manager.io/issuer: letsencrypt-nginx
-
   hosts:
     - host: jwt-rest-service.sonam.cloud
       paths:
@@ -56,9 +53,6 @@ ingress:
     - secretName: sonam.cloud
       hosts:
         - "*.sonam.cloud"
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

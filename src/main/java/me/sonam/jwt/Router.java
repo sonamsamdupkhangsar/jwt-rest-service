@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.RouterOperation;
@@ -62,7 +61,6 @@ public class Router {
                                     @ApiResponse(responseCode = "200", description = "successful operation"),
                                     @ApiResponse(responseCode = "400", description = "invalid user id")}
                                     , parameters = {@Parameter(in = ParameterIn.HEADER, name="jwt")}
-
                             ))
             }
     )
@@ -74,8 +72,6 @@ public class Router {
                 .andRoute(GET("/validate/{jwt}").and(accept(MediaType.APPLICATION_JSON)),
                         handler::validate)
                 .andRoute(GET("/validate").and(accept(MediaType.APPLICATION_JSON)),
-                        handler::validateHeader)
-                .andRoute(GET("/hello").and(accept(MediaType.APPLICATION_JSON)),
-                    handler::hello);
+                        handler::validateHeader);
     }
 }

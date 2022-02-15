@@ -48,5 +48,3 @@ jobs:
             --set "envs[1].name=JWT_ISSUER" --set "envs[1].value=${{ secrets.JWT_ISSUER }}" \
              $PROJECT_NAME \
             sonam/mychart -f values-backend.yaml --version 0.1.13 --namespace=backend
-
-

@@ -49,8 +49,6 @@ public class JwtRestServiceTest {
                     LOG.info("assert token not empty");
                     assertThat(map.get("token")).isNotNull();
                 }).verifyComplete();
-
-        client.get().uri("/hello").exchange().expectStatus().isOk();
     }
 
     @Test
@@ -113,6 +111,4 @@ public class JwtRestServiceTest {
                             }).verifyComplete();
                 });
     }
-
-
 }
