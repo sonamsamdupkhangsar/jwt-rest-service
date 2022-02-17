@@ -42,7 +42,7 @@ istio:
   enabled: false
 
 ingress:
-  enabled: false  # this service is not exposed to outside cluster because it is meant to be used internally only
+  enabled: true  # this service is not exposed to outside cluster because it is meant to be used internally only
   ingressClass: nginx
   hosts:
     - host: jwt-rest-service.sonam.cloud
