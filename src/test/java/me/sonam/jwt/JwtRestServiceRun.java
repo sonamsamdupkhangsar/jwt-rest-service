@@ -24,15 +24,15 @@ import static org.assertj.core.api.Assertions.assertThat;
  * It is just for verifying a provider service to be running for verification
  * against pact consumers.
  */
-//@EnableAutoConfiguration
-//@ExtendWith(SpringExtension.class)
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@EnableAutoConfiguration
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class JwtRestServiceRun {
     private static final Logger LOG = LoggerFactory.getLogger(JwtRestServiceRun.class);
 
-  //  @Autowired
+    @Autowired
     private WebTestClient client;
-/*
+
     @Value("${jwt.issuer}")
     private String issuer;
 
@@ -40,7 +40,7 @@ public class JwtRestServiceRun {
     public void getJwt() throws InterruptedException {
         LOG.info("running sleep");
 
-       *//* Thread.sleep(1000000L);
-        LOG.info("done sleeping");*//*
-    }*/
+        Thread.sleep(1000000L);
+        LOG.info("done sleeping");
+    }
 }

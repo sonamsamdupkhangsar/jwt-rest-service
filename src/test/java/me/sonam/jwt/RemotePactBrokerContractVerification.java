@@ -11,11 +11,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+/**
+ * For this to work the {@link JwtRestServiceRun} class must be running
+ * since it will assume the provider service is running locally on a RANDOM_PORT
+ *  This localhost config is defined in the maven plugin section.
+ *  Run this locally and then integrate with CI as separate mvn pact:verify step
+ *  and indicate where the provider is running in the maven pom.
+ */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Provider("jwt-rest-service")
 @PactBroker(url="https://pactbroker.sonam.cloud")
-public class RemotePactBrokerContractVerificationTest {
+public class RemotePactBrokerContractVerification {
 
     @TestTemplate
     @ExtendWith(PactVerificationSpringProvider.class)

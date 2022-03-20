@@ -99,7 +99,7 @@
                             <pactBrokerUrl>${pactbrokerurl}</pactBrokerUrl>
                             <protocol>http</protocol>
                             <host>localhost</host>
-                            <port>8080</port> <!--assumes running on 8080 port in RemotePactBrokerContractVerificationTest-->
+                            <port>8080</port> <!--assumes running on 8080 port in RemotePactBrokerContractVerification-->
                             <pactBroker>
                                 <url>${pactbrokerurl}</url>
                                 <authentication>
