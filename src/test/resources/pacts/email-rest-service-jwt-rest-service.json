@@ -1,0 +1,116 @@
+{
+  "provider": {
+    "name": "jwt-rest-service"
+  },
+  "consumer": {
+    "name": "email-rest-service"
+  },
+  "interactions": [
+    {
+      "description": "validate jwt header",
+      "request": {
+        "method": "GET",
+        "path": "/validate",
+        "headers": {
+          "Authorization": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzb25hbSIsImlzcyI6InNvbmFtLmNsb3VkIiwiYXVkIjoic29uYW0uY2xvdWQiLCJqdGkiOiJmMTY2NjM1OS05YTViLTQ3NzMtOWUyNy00OGU0OTFlNDYzNGIifQ.KGFBUjghvcmNGDH0eM17S9pWkoLwbvDaDBGAx2AyB41yZ_8-WewTriR08JdjLskw1dsRYpMh9idxQ4BS6xmOCQ"
+        },
+        "matchingRules": {
+          "header": {
+            "Authorization": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^Bearer .*$"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "audience": "string",
+          "subject": "string",
+          "id": "e2490de5-5bd3-43d5-b7c4-526e33f71304",
+          "issuer": "sonam.cloud"
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json"
+                }
+              ],
+              "combine": "AND"
+            }
+          },
+          "body": {
+            "$.subject": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.audience": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.id": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.issuer": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        },
+        "generators": {
+          "body": {
+            "$.subject": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.audience": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.id": {
+              "type": "Uuid"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "4.0.10"
+    }
+  }
+}

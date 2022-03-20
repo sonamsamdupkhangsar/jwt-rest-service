@@ -25,10 +25,12 @@ public class JwtService implements Jwt {
     static final String TOKEN_PREFIX = "Bearer";
 
     public JwtService() {
+        LOG.info("started JwtService");
     }
 
     @Override
     public Mono<String> create(String subject, String audience, int calendarField, int calendarValue) {
+        LOG.info("issuer: {}, secret: {}", issuer, secret);
         Calendar calendar = Calendar.getInstance();
         calendar.add(calendarField, calendarValue);
         Date expireDate = calendar.getTime();
@@ -48,6 +50,7 @@ public class JwtService implements Jwt {
 
     @Override
     public Mono<Map<String, String>> validate(String jwt) {
+        LOG.info("issuer: {}, secret: {}", issuer, secret);
         if (jwt != null) {
             LOG.debug("token is not null");
 

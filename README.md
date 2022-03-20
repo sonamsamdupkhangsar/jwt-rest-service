@@ -45,3 +45,15 @@ helm upgrade --install --timeout 5m0s \
             sonam/mychart -f values-backend.yaml --version 0.1.13 --namespace=backend --dry-run
 ```
 
+### Verify Pacts with Pactbroker
+To verify pact with the remote broker the provider service must be running.  The provider
+service host is defined in the `serviceProvider` section of maven pom.
+
+To verify Provider with consumer pact from a pact broker run `mvn pact:verify`.
+This will need to be done on its own after the code has been deployed to test this
+provider with consumer pacts.  You will need to supply
+`${pactbrokerurl}`, `${pactbrokerusername}`, `${pactbrokerpassword}` to update results
+to the pact broker.
+Using the current deplooy.yaml workflow, this will be done after we do a helm upgrade or install. 
+
+

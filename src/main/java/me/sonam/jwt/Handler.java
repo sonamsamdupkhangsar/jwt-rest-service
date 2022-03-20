@@ -23,9 +23,7 @@ public class Handler  {
     private Jwt jwt;
 
     private final String bearer = "Bearer: ";
-    /**
-     * outline only
-     */
+
     public Mono<ServerResponse> createJwt(ServerRequest serverRequest) {
         String username = serverRequest.pathVariable("username");
         String audience = serverRequest.pathVariable("audience");
@@ -53,6 +51,7 @@ public class Handler  {
     }
 
     public Mono<ServerResponse> validateHeader(ServerRequest serverRequest) {
+        LOG.info("jwt: {}", jwt);
         LOG.info("processing jwt from header: {}", serverRequest.headers().firstHeader("Authorization"));
         return jwt.validate(serverRequest.headers().firstHeader("Authorization").replace(bearer, ""))
                 .flatMap(map -> ServerResponse.ok()

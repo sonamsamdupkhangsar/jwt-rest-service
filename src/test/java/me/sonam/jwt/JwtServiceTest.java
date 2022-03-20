@@ -40,7 +40,7 @@ public class JwtServiceTest {
 
         stringMono.as(StepVerifier::create).assertNext(jwt-> {
             assertThat(jwt).isNotNull();
-            LOG.info("jwt is not null");
+            LOG.info("jwt is not null: {}", jwt);
 
             jwtService.validate(jwt).as(StepVerifier::create).assertNext(map -> {
 
