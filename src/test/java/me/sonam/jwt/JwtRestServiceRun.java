@@ -30,17 +30,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JwtRestServiceRun {
     private static final Logger LOG = LoggerFactory.getLogger(JwtRestServiceRun.class);
 
-    @Autowired
-    private WebTestClient client;
-
-    @Value("${jwt.issuer}")
-    private String issuer;
-
     @Test
     public void getJwt() throws InterruptedException {
         LOG.info("running sleep");
 
-        Thread.sleep(1000000L);
+        Thread.sleep(10000L);
         LOG.info("done sleeping");
     }
 }
