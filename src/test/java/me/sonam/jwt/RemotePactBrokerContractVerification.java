@@ -17,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  *  This localhost config is defined in the maven plugin section.
  *  Run this locally and then integrate with CI as separate mvn pact:verify step
  *  and indicate where the provider is running in the maven pom.
+ *  Note: This will run when you run thru IDE as test case if the {@link JwtRestServiceRun} class is running
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
