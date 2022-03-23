@@ -57,3 +57,8 @@ to the pact broker.
 Using the current deplooy.yaml workflow, this will be done after we do a helm upgrade or install. 
 
 
+To Push Pact verification results run two separate terminals.
+On one run `mvn test -Dtest=me.sonam.jwt.JwtRestServiceRun`
+and on another ` mvn pact:verify -Dpactbrokerurl= -Dpactbrokerusername= -Dpactbrokerpassword=`
+
+This will publish the provider verification results to pactbroker.
