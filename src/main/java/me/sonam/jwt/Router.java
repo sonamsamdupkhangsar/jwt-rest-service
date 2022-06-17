@@ -35,7 +35,7 @@ public class Router {
     @Bean
     @RouterOperations(
             {
-                    @RouterOperation(path = "/create/{username}/{audience}/{expireField}/{expireIn}"
+                    @RouterOperation(path = "/create/{username}/{audience}/{expireField}/{expireIn}/{apiKey}"
                             , produces = {
                             MediaType.APPLICATION_JSON_VALUE}, method= RequestMethod.GET,
                             operation = @Operation(operationId="createJwt", responses = {
@@ -70,7 +70,7 @@ public class Router {
     public RouterFunction<ServerResponse> route(Handler handler) {
         LOG.info("building router function");
 
-        return RouterFunctions.route(GET("/create/{username}/{audience}/{expireField}/{expireIn}").and(accept(MediaType.APPLICATION_JSON)),
+        return RouterFunctions.route(GET("/create/{username}/{audience}/{expireField}/{expireIn}/{apiKey}").and(accept(MediaType.APPLICATION_JSON)),
                 handler::createJwt)
                 .andRoute(GET("/validate/{jwt}").and(accept(MediaType.APPLICATION_JSON)),
                         handler::validate)

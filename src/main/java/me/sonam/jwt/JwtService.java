@@ -29,7 +29,7 @@ public class JwtService implements Jwt {
     }
 
     @Override
-    public Mono<String> create(String subject, String audience, int calendarField, int calendarValue) {
+    public Mono<String> create(String subject, String audience, int calendarField, int calendarValue, String apiKey) {
         LOG.info("issuer: {}, secret: {}", issuer, secret);
         Calendar calendar = Calendar.getInstance();
         calendar.add(calendarField, calendarValue);
@@ -37,6 +37,7 @@ public class JwtService implements Jwt {
 
         String jwt = Jwts.builder()
                 .setSubject(subject)
+                .setHeaderParam("apiKey", apiKey)
                 .setIssuer(issuer)
                 .setAudience(audience)
                 .setExpiration(expireDate)

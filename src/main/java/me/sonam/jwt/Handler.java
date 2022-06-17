@@ -29,10 +29,11 @@ public class Handler  {
         String audience = serverRequest.pathVariable("audience");
         String expireField = serverRequest.pathVariable("expireField");
         String expireIn = serverRequest.pathVariable("expireIn");
+        String apiKey = serverRequest.pathVariable("apiKey");
 
         LOG.info("generating jwt");
 
-        return jwt.create(username, audience, Integer.parseInt(expireField), Integer.parseInt(expireIn))
+        return jwt.create(username, audience, Integer.parseInt(expireField), Integer.parseInt(expireIn), apiKey)
                 .flatMap(s -> {
                 Map<String, String> map = new HashMap<>();
                 map.put("token", s);
