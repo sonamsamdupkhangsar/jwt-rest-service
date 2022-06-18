@@ -1,8 +1,6 @@
 package me.sonam.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,12 +55,14 @@ public class JwtService implements Jwt {
 
             Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwt.replace(TOKEN_PREFIX, ""))
                     .getBody();
+            JwsHeader jwsHeader = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwt.replace(TOKEN_PREFIX, "")).getHeader();
 
             Map<String, String> map = new HashMap<>();
             map.put("subject", claims.getSubject());
             map.put("audience", claims.getAudience());
             map.put("id", claims.getId());
             map.put("issuer", claims.getIssuer());
+            map.put("apiKey", jwsHeader.getOrDefault("apiKey", "").toString());
 
             Date expirationDate = claims.getExpiration();
             if (expirationDate == null) {

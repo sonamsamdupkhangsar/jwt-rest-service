@@ -56,6 +56,10 @@ public class JwtServiceTest {
 
                 LOG.info("issuer: {}", map.get("issuer"));
                 assertThat(map.get("subject")).isEqualTo(subject);
+
+                LOG.info("apiKey: {}", map.get("apiKey"));
+                assertThat(map.get("apiKey")).isEqualTo("dummyApiKey");
+
                 LOG.info("verfied claims");
             }).verifyComplete();
         }).verifyComplete();
