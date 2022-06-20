@@ -36,7 +36,7 @@ public class JwtServiceTest {
         final int expireIn = 10;
 
         //jwt token validate for 10 days
-        Mono<String> stringMono = jwtService.create(subject, audience, expireInField, expireIn, "dummyApiKey");
+        Mono<String> stringMono = jwtService.create(subject, audience, expireInField, expireIn);
 
         stringMono.as(StepVerifier::create).assertNext(jwt-> {
             assertThat(jwt).isNotNull();
@@ -56,9 +56,6 @@ public class JwtServiceTest {
 
                 LOG.info("issuer: {}", map.get("issuer"));
                 assertThat(map.get("subject")).isEqualTo(subject);
-
-                LOG.info("apiKey: {}", map.get("apiKey"));
-                assertThat(map.get("apiKey")).isEqualTo("dummyApiKey");
 
                 LOG.info("verfied claims");
             }).verifyComplete();

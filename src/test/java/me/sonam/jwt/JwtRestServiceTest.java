@@ -38,10 +38,10 @@ public class JwtRestServiceTest {
         final int expireInField = 5;
         final int expireIn = 10;
 
-        final String path = "/create/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn+ "/" + "dummyApiKey" ;
+        final String path = "/create/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn;
 
         FluxExchangeResult<Map> fluxExchangeResult = client.get().uri(path)
-                .accept(MediaType.TEXT_PLAIN)
+                .accept(MediaType.APPLICATION_JSON)
                 .exchange().expectStatus().isOk()
                 .returnResult(Map.class);
         StepVerifier.create(fluxExchangeResult.getResponseBody())
@@ -58,7 +58,7 @@ public class JwtRestServiceTest {
         final int expireInField = 5;
         final int expireIn = 10;
 
-        final String path = "/create/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn+ "/" + "dummyApiKey" ;
+        final String path = "/create/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn;
 
         client.get().uri(path)
                 .accept(MediaType.APPLICATION_JSON)
