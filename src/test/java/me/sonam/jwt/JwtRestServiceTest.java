@@ -41,7 +41,7 @@ public class JwtRestServiceTest {
         final String path = "/create/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn+ "/" + "dummyApiKey" ;
 
         FluxExchangeResult<Map> fluxExchangeResult = client.get().uri(path)
-                .accept(MediaType.APPLICATION_JSON)
+                .accept(MediaType.TEXT_PLAIN)
                 .exchange().expectStatus().isOk()
                 .returnResult(Map.class);
         StepVerifier.create(fluxExchangeResult.getResponseBody())

@@ -38,7 +38,7 @@ public class Handler  {
                 Map<String, String> map = new HashMap<>();
                 map.put("token", s);
                         return ServerResponse.ok()
-                                .contentType(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.TEXT_PLAIN)
                                 .bodyValue(map);}
                                 );
     }
