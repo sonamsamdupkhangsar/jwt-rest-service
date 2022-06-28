@@ -1,7 +1,5 @@
 package me.sonam.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.SignatureException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -17,7 +15,6 @@ import reactor.test.StepVerifier;
 import java.util.Calendar;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
@@ -70,28 +67,15 @@ public class JwtServiceTest {
     @Test
     public void badSignature() {
         final String jwt= "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJz25hbSIsImlzcyI6InNvbmFtLmNsb3VkIiwiYXVkIjoic29uYW0uY2xvdWQiLCJqdGkiOiJmMTY2NjM1OS05YTViLTQ3NzMtOWUyNy00OGU0OTFlNDYzNGIifQ.KGFBUjghvcmNGDH0eM17S9pWkoLwbvDaDBGAx2AyB41yZ_8-WewTriR08JdjLskw1dsRYpMh9idxQ4BS6xmOCQ";
-        try {
-            jwtService.validate(jwt).as(StepVerifier::create).assertNext(map -> {
-                fail("should not get here as jwt is a invalid signature by tampering");
-                LOG.info("validate ?");
 
-                LOG.info("verfied claims");
-            }).verifyComplete();
-        } catch (SignatureException signatureException) {
-            LOG.error("signature error");
-        }
+        jwtService.validate(jwt).as(StepVerifier::create).expectError(JwtException.class).verify();
     }
 
     @Test
     public void expiredJwt() {
         final String jwt = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzb25hbSIsImlzcyI6InNvbmFtLmNsb3VkIiwiYXVkIjoic29uYW0uY2xvdWQiLCJleHAiOjE2NTY0NTQ2NDQsImp0aSI6ImJmNjI4OTI1LTIzN2EtNDRlNy1hYjlmLTAwYTVjZmRmYzVkNSJ9.BafIk8NcNuR7YhJNe1BabDctzutlWkPM47EW3umCEaEXhrcXoKsT__daVpFkVru2Y-oXFbRwv7I4hJxlXWZK1A";
-        try {
-            jwtService.validate(jwt).as(StepVerifier::create).assertNext(map -> {
-                fail("jwt is expired");
-            }).verifyComplete();
-        }
-        catch (ExpiredJwtException expiredJwtException) {
-            LOG.error("jwt is expired as expected");
-        }
+
+        jwtService.validate(jwt).as(StepVerifier::create).expectError(JwtException.class).verify();
+
     }
 }

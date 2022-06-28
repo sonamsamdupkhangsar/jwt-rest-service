@@ -1,8 +1,6 @@
 package me.sonam.jwt;
 
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.SignatureException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -20,7 +18,6 @@ import reactor.test.StepVerifier;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
