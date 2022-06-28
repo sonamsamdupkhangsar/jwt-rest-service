@@ -46,7 +46,10 @@ public class Handler  {
         return jwt.validate(serverRequest.pathVariable("jwt"))
                 .flatMap(map -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(map));
+                        .bodyValue(map))
+                .onErrorResume(throwable ->
+                        ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(throwable.getMessage()));
 
     }
 
@@ -56,7 +59,10 @@ public class Handler  {
         return jwt.validate(serverRequest.headers().firstHeader("Authorization").replace(bearer, ""))
                 .flatMap(map -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(map));
+                        .bodyValue(map))
+                .onErrorResume(throwable ->
+                        ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(throwable.getMessage()));
 
     }
 

@@ -1,6 +1,8 @@
 package me.sonam.jwt;
 
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -18,6 +20,7 @@ import reactor.test.StepVerifier;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
@@ -110,5 +113,39 @@ public class JwtRestServiceTest {
                                 LOG.info("verfied claims");
                             }).verifyComplete();
                 });
+    }
+
+    @Test
+    public void badSignature() {
+        final String jwt= "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJz25hbSIsImlzcyI6InNvbmFtLmNsb3VkIiwiYXVkIjoic29uYW0uY2xvdWQiLCJqdGkiOiJmMTY2NjM1OS05YTViLTQ3NzMtOWUyNy00OGU0OTFlNDYzNGIifQ.KGFBUjghvcmNGDH0eM17S9pWkoLwbvDaDBGAx2AyB41yZ_8-WewTriR08JdjLskw1dsRYpMh9idxQ4BS6xmOCQ";
+
+        FluxExchangeResult<String> fluxExchangeResult = client.get().uri("/validate")
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(jwt))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange().expectStatus().isBadRequest()
+                .returnResult(String.class);
+
+        StepVerifier.create(fluxExchangeResult.getResponseBody())
+                .assertNext(s -> {
+                    LOG.info("data: {}", s);
+                    assertThat(s).isEqualTo("JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
+                }).verifyComplete();
+    }
+
+    @Test
+    public void expiredJwt() {
+        final String jwt = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzb25hbSIsImlzcyI6InNvbmFtLmNsb3VkIiwiYXVkIjoic29uYW0uY2xvdWQiLCJleHAiOjE2NTY0NTQ2NDQsImp0aSI6ImJmNjI4OTI1LTIzN2EtNDRlNy1hYjlmLTAwYTVjZmRmYzVkNSJ9.BafIk8NcNuR7YhJNe1BabDctzutlWkPM47EW3umCEaEXhrcXoKsT__daVpFkVru2Y-oXFbRwv7I4hJxlXWZK1A";
+
+        FluxExchangeResult<String> fluxExchangeResult = client.get().uri("/validate")
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(jwt))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange().expectStatus().isBadRequest()
+                .returnResult(String.class);
+
+        StepVerifier.create(fluxExchangeResult.getResponseBody())
+                .assertNext(s -> {
+                    LOG.info("data: {}", s);
+                    assertThat(s).startsWith("JWT expired at ");
+                }).verifyComplete();
     }
 }

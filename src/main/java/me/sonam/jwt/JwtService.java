@@ -52,33 +52,37 @@ public class JwtService implements Jwt {
         if (jwt != null) {
             LOG.debug("token is not null");
 
-            Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwt.replace(TOKEN_PREFIX, ""))
-                    .getBody();
-            JwsHeader jwsHeader = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwt.replace(TOKEN_PREFIX, "")).getHeader();
+            try {
+                Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwt.replace(TOKEN_PREFIX, ""))
+                        .getBody();
+                JwsHeader jwsHeader = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwt.replace(TOKEN_PREFIX, "")).getHeader();
 
-            Map<String, String> map = new HashMap<>();
-            map.put("subject", claims.getSubject());
-            map.put("audience", claims.getAudience());
-            map.put("id", claims.getId());
-            map.put("issuer", claims.getIssuer());
-            map.put("apiKey", jwsHeader.getOrDefault("apiKey", "").toString());
+                Map<String, String> map = new HashMap<>();
+                map.put("subject", claims.getSubject());
+                map.put("audience", claims.getAudience());
+                map.put("id", claims.getId());
+                map.put("issuer", claims.getIssuer());
 
-            Date expirationDate = claims.getExpiration();
-            if (expirationDate == null) {
-                LOG.info("no expiration date, jwt is valid");
-                return Mono.just(map);
-            }
-            else {
-                Calendar calendar = Calendar.getInstance();
-                Date currentDate = calendar.getTime();
 
-                if (currentDate.before(expirationDate)) {
-                    LOG.debug("jwt is valid");
+                Date expirationDate = claims.getExpiration();
+                if (expirationDate == null) {
+                    LOG.info("no expiration date, jwt is valid");
                     return Mono.just(map);
                 } else {
-                    LOG.debug("token has expired, ask user to renew");
-                    return Mono.empty();
+                    Calendar calendar = Calendar.getInstance();
+                    Date currentDate = calendar.getTime();
+
+                    if (currentDate.before(expirationDate)) {
+                        LOG.debug("jwt is valid");
+                        return Mono.just(map);
+                    } else {
+                        LOG.debug("token has expired, ask user to renew");
+                        return Mono.empty();
+                    }
                 }
+            }
+            catch (SignatureException | ExpiredJwtException exception) {
+                return Mono.error( new JwtException(exception.getMessage()));
             }
 
         }
