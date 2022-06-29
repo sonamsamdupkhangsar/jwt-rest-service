@@ -76,6 +76,10 @@ public class JwtServiceTest {
         final String jwt = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzb25hbSIsImlzcyI6InNvbmFtLmNsb3VkIiwiYXVkIjoic29uYW0uY2xvdWQiLCJleHAiOjE2NTY0NTQ2NDQsImp0aSI6ImJmNjI4OTI1LTIzN2EtNDRlNy1hYjlmLTAwYTVjZmRmYzVkNSJ9.BafIk8NcNuR7YhJNe1BabDctzutlWkPM47EW3umCEaEXhrcXoKsT__daVpFkVru2Y-oXFbRwv7I4hJxlXWZK1A";
 
         jwtService.validate(jwt).as(StepVerifier::create).expectError(JwtException.class).verify();
+    }
 
+    @Test
+    public void jwtIsNull() {
+        jwtService.validate(null).as(StepVerifier::create).expectError(JwtException.class).verify();
     }
 }

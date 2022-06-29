@@ -57,6 +57,12 @@ public class Handler  {
     public Mono<ServerResponse> validateHeader(ServerRequest serverRequest) {
         LOG.info("jwt: {}", jwt);
         LOG.info("processing jwt from header: {}", serverRequest.headers().firstHeader("Authorization"));
+
+        if (null == serverRequest.headers().firstHeader("Authorization")) {
+            return ServerResponse.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue("Jwt is missing");
+        }
+
         return jwt.validate(serverRequest.headers().firstHeader("Authorization").replace(bearer, ""))
                 .flatMap(map -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)

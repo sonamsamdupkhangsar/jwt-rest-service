@@ -124,7 +124,6 @@ public class JwtRestServiceTest {
 
         StepVerifier.create(fluxExchangeResult.getResponseBody())
                 .assertNext(s -> {
-                    LOG.info("data: {}", s);
                     assertThat(s).isEqualTo("JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
                 }).verifyComplete();
     }
@@ -141,8 +140,35 @@ public class JwtRestServiceTest {
 
         StepVerifier.create(fluxExchangeResult.getResponseBody())
                 .assertNext(s -> {
-                    LOG.info("data: {}", s);
                     assertThat(s).startsWith("JWT expired at ");
                 }).verifyComplete();
     }
+
+    @Test
+    public void JwtBearerAuthIsNull() {
+        FluxExchangeResult<String> fluxExchangeResult = client.get().uri("/validate")
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(null))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange().expectStatus().isUnauthorized()
+                .returnResult(String.class);
+
+        StepVerifier.create(fluxExchangeResult.getResponseBody())
+                .assertNext(s -> {
+                    assertThat(s).startsWith("JWT strings must contain exactly 2 period characters. Found: 0");
+                }).verifyComplete();
+    }
+
+    @Test
+    public void JwtIsNull() {
+        FluxExchangeResult<String> fluxExchangeResult = client.get().uri("/validate")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange().expectStatus().isUnauthorized()
+                .returnResult(String.class);
+
+        StepVerifier.create(fluxExchangeResult.getResponseBody())
+                .assertNext(s -> {
+                    assertThat(s).startsWith("Jwt is missing");
+                }).verifyComplete();
+    }
+
 }
