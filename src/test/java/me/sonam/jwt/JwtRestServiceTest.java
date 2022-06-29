@@ -119,7 +119,7 @@ public class JwtRestServiceTest {
         FluxExchangeResult<String> fluxExchangeResult = client.get().uri("/validate")
                 .headers(httpHeaders -> httpHeaders.setBearerAuth(jwt))
                 .accept(MediaType.APPLICATION_JSON)
-                .exchange().expectStatus().isBadRequest()
+                .exchange().expectStatus().isUnauthorized()
                 .returnResult(String.class);
 
         StepVerifier.create(fluxExchangeResult.getResponseBody())
@@ -136,7 +136,7 @@ public class JwtRestServiceTest {
         FluxExchangeResult<String> fluxExchangeResult = client.get().uri("/validate")
                 .headers(httpHeaders -> httpHeaders.setBearerAuth(jwt))
                 .accept(MediaType.APPLICATION_JSON)
-                .exchange().expectStatus().isBadRequest()
+                .exchange().expectStatus().isUnauthorized()
                 .returnResult(String.class);
 
         StepVerifier.create(fluxExchangeResult.getResponseBody())

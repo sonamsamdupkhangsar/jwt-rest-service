@@ -81,7 +81,10 @@ public class JwtService implements Jwt {
                     }
                 }
             }
-            catch (SignatureException | ExpiredJwtException exception) {
+            catch (SignatureException signatureException) {
+                return Mono.error( new JwtException(signatureException.getMessage()));
+            }
+            catch (ExpiredJwtException exception) {
                 return Mono.error( new JwtException(exception.getMessage()));
             }
 
