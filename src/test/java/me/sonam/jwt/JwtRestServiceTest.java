@@ -66,7 +66,8 @@ public class JwtRestServiceTest {
                 .value(s -> {
                     LOG.info("value: {}", s.get("token"));
 
-                    FluxExchangeResult<Map> fluxExchangeResult = client.get().uri("/validate/" + s.get("token"))
+                    FluxExchangeResult<Map> fluxExchangeResult = client.get().uri("/validate")
+                            .headers(httpHeaders -> httpHeaders.setBearerAuth(s.get("token").toString()))
                             .accept(MediaType.APPLICATION_JSON)
                             .exchange().expectStatus().isOk()
                             .returnResult(Map.class);

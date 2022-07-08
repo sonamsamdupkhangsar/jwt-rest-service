@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -44,7 +45,6 @@ public class JwtServiceTest {
             LOG.info("jwt is not null: {}", jwt);
 
             jwtService.validate(jwt).as(StepVerifier::create).assertNext(map -> {
-
 
                 LOG.info("audience: {}", map.get("audience"));
                 assertThat(map.get("audience")).isEqualTo(audience);

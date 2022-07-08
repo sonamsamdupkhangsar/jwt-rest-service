@@ -64,9 +64,13 @@ public class Handler  {
         }
 
         return jwt.validate(serverRequest.headers().firstHeader("Authorization").replace(bearer, ""))
-                .flatMap(map -> ServerResponse.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(map))
+                .flatMap(map -> {
+                    LOG.info("set subject in http header");
+                   return ServerResponse.ok()
+                            .contentType(MediaType.APPLICATION_JSON)
+                           .headers(httpHeaders -> httpHeaders.set("subject", map.get("subject")))
+                            .bodyValue(map);
+                })
                 .onErrorResume(throwable ->
                     ServerResponse.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(throwable.getMessage())
