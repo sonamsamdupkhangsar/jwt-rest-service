@@ -68,7 +68,7 @@ public class Handler  {
                     LOG.info("set subject in http header");
                    return ServerResponse.ok()
                             .contentType(MediaType.APPLICATION_JSON)
-                           .headers(httpHeaders -> httpHeaders.set("subject", map.get("subject")))
+                           .headers(httpHeaders -> httpHeaders.set("authId", map.get("subject")))
                             .bodyValue(map);
                 })
                 .onErrorResume(throwable ->
