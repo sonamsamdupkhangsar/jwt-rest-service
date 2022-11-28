@@ -6,7 +6,7 @@ COPY pom.xml settings.xml ./
 COPY src ./src
 
 
-RUN ["mvn", "-s",  "settings.xml", "clean", "install"]
+RUN ["--mount=type=secret,id=PERSONAL_ACCESS_TOKEN", "mvn",  "-s",  "settings.xml", "clean", "install"]
 
 FROM openjdk:17
 WORKDIR /app
