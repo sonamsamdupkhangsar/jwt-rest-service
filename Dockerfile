@@ -5,6 +5,7 @@ WORKDIR /app
 COPY pom.xml settings.xml ./
 COPY src ./src
 
+
 RUN ["mvn", "-s",  "settings.xml", "clean", "install"]
 
 FROM openjdk:17
