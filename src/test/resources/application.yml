@@ -1,6 +1,6 @@
 logging:
   level:
-    root: error
+    root: warn
     me:
       sonam: debug
 info:
@@ -21,3 +21,12 @@ server:
 jwt:
   secret: mysecret
   issuer: sonam.cloud
+
+
+spring:
+  r2dbc:
+    url: r2dbc:h2:mem:///contentitem?options=DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    name: sa
+    password:
+
+permitPaths: /create/*

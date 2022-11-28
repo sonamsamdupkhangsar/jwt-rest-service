@@ -20,3 +20,13 @@ server:
 jwt:
   secret: ${JWT_SECRET}
   issuer: ${JWT_ISSUER}
+
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://${POSTGRES_SERVICE}/${POSTGRES_DBNAME}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    properties:
+      sslMode:  ${DB_SSLMODE}
+
+permitPaths: /create/*

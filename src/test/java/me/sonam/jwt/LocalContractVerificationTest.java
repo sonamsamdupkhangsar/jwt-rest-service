@@ -12,13 +12,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(SpringExtension.class)
+/**
+ * this is disabled now with jwt-validator moved to a library
+ */
+/*@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Provider("jwt-rest-service")
-@PactFolder("pacts")
+@PactFolder("pacts")*/
 public class LocalContractVerificationTest {
 
-    @LocalServerPort
+   /* @LocalServerPort
     int port;
 
     @BeforeEach
@@ -30,5 +33,5 @@ public class LocalContractVerificationTest {
     @ExtendWith(PactVerificationSpringProvider.class)
     void pactVerificationTestTemplate(PactVerificationContext context) {
         context.verifyInteraction();
-    }
+    }*/
 }

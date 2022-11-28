@@ -4,6 +4,9 @@ This is JWT (Json Web Token) Rest Service for issuing Jwt tokens and validating 
 This is a reactive Java webservice api.
 
 
+This service create a RSA public/private keypair on startup.  The private jwtKey will be stored in a database.
+The public jwtKey will be shared with any service that needs to validate a JWT token issued by this service.
+  
 ## Run locally
 
 `mvn spring-boot:run -Dspring-boot.run.arguments="--jwt.issuer=dummy.com \

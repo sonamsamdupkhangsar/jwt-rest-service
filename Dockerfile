@@ -5,9 +5,9 @@ WORKDIR /app
 COPY pom.xml ./
 COPY src ./src
 
-RUN ["mvn", "clean", "install"]
+RUN ["mvn", "-s",  "settings.xml", "clean", "install"]
 
-FROM openjdk:16
+FROM openjdk:17
 WORKDIR /app
 COPY --from=build /app/target/jwt-rest-service-1.0-SNAPSHOT.jar /app/jwt-rest-service.jar
 EXPOSE 8080

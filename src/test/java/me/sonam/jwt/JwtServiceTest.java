@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.Calendar;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,54 +32,24 @@ public class JwtServiceTest {
     // get a jwt and validate the jwt validation is true or is is valid
     @Test
     public void createJwtAndValidate() {
+        String clientId = UUID.randomUUID().toString();
+        String groupNames = "admin, user";
         final String audience = "sonam.cloud";
         final String subject = "sonam";
         final int expireInField = Calendar.SECOND;
         final int expireIn = 3;
 
         //jwt token validate for 10 days
-        Mono<String> stringMono = jwtService.create(subject, audience, expireInField, expireIn);
+        Mono<String> stringMono = jwtService.create(clientId, groupNames, subject, audience, expireInField, expireIn);
 
-        stringMono.as(StepVerifier::create).assertNext(jwt-> {
+        stringMono.subscribe(s -> LOG.info("reponse: {}", s));
+
+        stringMono = jwtService.create(clientId, groupNames, subject, audience, expireInField, expireIn);
+        stringMono.as(StepVerifier::create).assertNext(jwt -> {
             assertThat(jwt).isNotNull();
             LOG.info("jwt is not null: {}", jwt);
 
-            jwtService.validate(jwt).as(StepVerifier::create).assertNext(map -> {
-
-                LOG.info("audience: {}", map.get("audience"));
-                assertThat(map.get("audience")).isEqualTo(audience);
-
-                LOG.info("issuer: {}", map.get("issuer"));
-                assertThat(map.get("issuer")).isEqualTo(issuer);
-
-                LOG.info("id: {}", map.get("id"));
-                assertThat(map.get("id")).isNotNull();
-
-                LOG.info("issuer: {}", map.get("issuer"));
-                assertThat(map.get("subject")).isEqualTo(subject);
-
-                LOG.info("verfied claims");
-            }).verifyComplete();
         }).verifyComplete();
 
-    }
-
-    @Test
-    public void badSignature() {
-        final String jwt= "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJz25hbSIsImlzcyI6InNvbmFtLmNsb3VkIiwiYXVkIjoic29uYW0uY2xvdWQiLCJqdGkiOiJmMTY2NjM1OS05YTViLTQ3NzMtOWUyNy00OGU0OTFlNDYzNGIifQ.KGFBUjghvcmNGDH0eM17S9pWkoLwbvDaDBGAx2AyB41yZ_8-WewTriR08JdjLskw1dsRYpMh9idxQ4BS6xmOCQ";
-
-        jwtService.validate(jwt).as(StepVerifier::create).expectError(JwtException.class).verify();
-    }
-
-    @Test
-    public void expiredJwt() {
-        final String jwt = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzb25hbSIsImlzcyI6InNvbmFtLmNsb3VkIiwiYXVkIjoic29uYW0uY2xvdWQiLCJleHAiOjE2NTY0NTQ2NDQsImp0aSI6ImJmNjI4OTI1LTIzN2EtNDRlNy1hYjlmLTAwYTVjZmRmYzVkNSJ9.BafIk8NcNuR7YhJNe1BabDctzutlWkPM47EW3umCEaEXhrcXoKsT__daVpFkVru2Y-oXFbRwv7I4hJxlXWZK1A";
-
-        jwtService.validate(jwt).as(StepVerifier::create).expectError(JwtException.class).verify();
-    }
-
-    @Test
-    public void jwtIsNull() {
-        jwtService.validate(null).as(StepVerifier::create).expectError(JwtException.class).verify();
     }
 }

@@ -47,35 +47,14 @@ public class Router {
                                             @Parameter(in = ParameterIn.PATH, name="expireField"),
                                             @Parameter(in = ParameterIn.PATH, name="expireIn")
                                     }
-                            )),
-                    @RouterOperation(path = "/validate/{jwt}"
-                            , produces = {
-                            MediaType.APPLICATION_JSON_VALUE}, method= RequestMethod.GET,
-                            operation = @Operation(operationId="validateJwt", responses = {
-                                    @ApiResponse(responseCode = "200", description = "successful operation"),
-                                    @ApiResponse(responseCode = "400", description = "invalid user id")}
-                                    , parameters = {@Parameter(in = ParameterIn.PATH, name="jwt")}
-                            )),
-                    @RouterOperation(path = "/validate"
-                            , produces = {
-                            MediaType.APPLICATION_JSON_VALUE}, method= RequestMethod.GET,
-
-                            operation = @Operation(operationId="validateJwt", responses = {
-                                    @ApiResponse(responseCode = "200", description = "successful operation"),
-                                    @ApiResponse(responseCode = "400", description = "invalid user id")}
-                                    , parameters = {@Parameter(in = ParameterIn.HEADER, name="jwt")}
                             ))
             }
     )
     public RouterFunction<ServerResponse> route(Handler handler) {
         LOG.info("building router function");
 
-        return RouterFunctions.route(GET("/create/{username}/{audience}/{expireField}/{expireIn}").
+        return RouterFunctions.route(GET("/create/{clientId}/{groupNames}/{username}/{audience}/{expireField}/{expireIn}").
                         and(accept(MediaType.APPLICATION_JSON)),
-                handler::createJwt)
-                .andRoute(GET("/validate/{jwt}").and(accept(MediaType.APPLICATION_JSON)),
-                        handler::validate)
-                .andRoute(GET("/validate").and(accept(MediaType.APPLICATION_JSON)),
-                        handler::validateHeader);
+                handler::createJwt);
     }
 }
