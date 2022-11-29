@@ -6,7 +6,8 @@ WORKDIR /app
 
 COPY pom.xml settings.xml ./
 COPY src ./src
-RUN echo "imageRegistry is : $IMAGEREGISTRY\n"
+RUN echo ${IMAGEREGISTRY}
+RUN echo "imageRegistry is : ${IMAGEREGISTRY}"
 
 RUN ["--mount=type=secret,id=PERSONAL_ACCESS_TOKEN", "mvn",  "-s",  "settings.xml", "clean", "install"]
 
