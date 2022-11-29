@@ -13,11 +13,13 @@ RUN echo "imageRegistry is : ${IMAGEREGISTRY}"
 RUN --mount=type=secret,id=IMAGEREGISTRY \
     export IMAGEREGISTRY=$(cat /run/secrets/IMAGEREGISTRY) && \
     echo "(1) imageRegistry: ${IMAGEREGISTRY}, $IMAGEREGISTRY"
+
+
 RUN echo "(2) imageRegistry: ${IMAGEREGISTRY}"
 
-RUN ["--mount=type=secret,id=PERSONAL_ACCESS_TOKEN \
-   export PERSONAL_ACCESS_TOKEN=$(cat /run/secrets/PERSONAL_ACCESS_TOKEN)",
-   "mvn",  "-s",  "settings.xml", "clean", "install"]
+RUN --mount=type=secret,id=PERSONAL_ACCESS_TOKEN \
+   export PERSONAL_ACCESS_TOKEN=$(cat /run/secrets/PERSONAL_ACCESS_TOKEN) && \
+   ["mvn",  "-s",  "settings.xml", "clean", "install"]
 
 FROM openjdk:17
 WORKDIR /app
