@@ -1,6 +1,6 @@
 FROM maven:3-openjdk-17-slim as build
 
-ARG IMAGEREGISTRY
+#ARG IMAGEREGISTRY
 
 WORKDIR /app
 
