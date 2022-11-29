@@ -1,3 +1,5 @@
+# syntax = docker/dockerfile:1.2
+
 FROM maven:3-openjdk-17-slim as build
 
 #ARG IMAGEREGISTRY
