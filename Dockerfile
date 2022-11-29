@@ -1,10 +1,12 @@
 FROM maven:3-openjdk-17-slim as build
 
+ARG IMAGEREGISTRY
+
 WORKDIR /app
 
 COPY pom.xml settings.xml ./
 COPY src ./src
-
+RUN echo "imageRegistry is : $IMAGEREGISTRY\n"
 
 RUN ["--mount=type=secret,id=PERSONAL_ACCESS_TOKEN", "mvn",  "-s",  "settings.xml", "clean", "install"]
 
