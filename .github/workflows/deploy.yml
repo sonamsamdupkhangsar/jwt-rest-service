@@ -43,9 +43,9 @@ jobs:
           push: true
           tags: ghcr.io/sonamsamdupkhangsar/jwt-rest-service:latest
           secrets: |
-            "GIT_AUTH_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}"
-            "PERSONAL_ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}"
-            "IMAGEREGISTRY=HelloMan"
+            GIT_AUTH_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
+            PERSONAL_ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
+            IMAGEREGISTRY=HelloMan
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
