@@ -81,6 +81,8 @@ postgres:
 envs:
   - name: DB_SSLMODE
     value: REQUIRE
+  - name: JWT_ISSUER
+    value: sonam.cloud
 
 health:
   liveness:

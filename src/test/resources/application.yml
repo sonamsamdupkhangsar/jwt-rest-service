@@ -19,7 +19,6 @@ server:
   port: 8080
 
 jwt:
-  secret: mysecret
   issuer: sonam.cloud
 
 

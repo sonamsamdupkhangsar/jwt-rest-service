@@ -15,23 +15,15 @@ public class JwtService implements Jwt {
 
     private static final Logger LOG = LoggerFactory.getLogger(JwtService.class);
 
-    @Value("${jwt.secret}")
-    private String secret;
-
-    @Value("${jwt.issuer}")
-    private String issuer;
-
     @Autowired
     private JwtCreator jwtCreator;
-
-    static final String TOKEN_PREFIX = "Bearer";
 
     public JwtService() {
     }
 
     @Override
     public Mono<String> create(String clientId, String groupNames, String subject, String audience, int calendarField, int calendarValue) {
-        LOG.info("issuer: {}, secret: {}", issuer, secret);
+        LOG.info("create jwt");
 
         return jwtCreator.create(clientId, groupNames, subject, audience, calendarField, calendarValue);
     }
