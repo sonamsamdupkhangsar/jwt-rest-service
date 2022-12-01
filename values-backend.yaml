@@ -72,6 +72,16 @@ tolerations: []
 
 affinity: {}
 
+postgres:
+  port: "5432"
+  service: user-minimal-cluster
+  secretfile: sonam-user.user-minimal-cluster.credentials.postgresql.acid.zalan.do
+  dbname: user
+
+envs:
+  - name: DB_SSLMODE
+    value: REQUIRE
+
 health:
   liveness:
     path: /api/health/liveness
