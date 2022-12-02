@@ -66,6 +66,3 @@ jobs:
             --set "project=$PROJECT_NAME" \
              $PROJECT_NAME \
             sonam/mychart -f values-backend.yaml --version 0.1.21 --namespace=backend
-
-#        - name: Publish Pacts
-#          run: mvn pact:verify -Dpactbrokerurl=${{ secrets.PACTBROKER_URL }} -Dpactbrokerusername=${{ secrets.PACTBROKER_USERNAME }} -Dpactbrokerpassword=${{ secrets.PACTBROKER_PASSWORD }}
