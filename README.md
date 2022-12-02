@@ -3,9 +3,21 @@ This is jwt-rest-service for issuing Jwt tokens
 
 This service create a RSA public/private keypair on startup.  The private jwtKey will be stored in a database.
 The public jwtKey will be shared with internal service thru using the [jwt-validator](https://github.com/sonamsamdupkhangsar/jwt-validator) library for validating the jwt token.
-  
+ 
+## Consumer
+This service is consumed by the [authentication-rest-service](https://github.com/sonamsamdupkhangsar/authentication-rest-service) during `authenticate` api call.
+
+## Builing locally
+Use the settings.xml file to build locally or on github.  It contains reference to pull down `jwt-issuer` library from github maven repository.
+Use `mvn -s settings.xml -U test` to build locally.
+
+
 ## Run locally
-`mvn spring-boot:run -Dspring-boot.run.arguments="--jwt.issuer=dummy.com`
+`mvn spring-boot:run -Dspring-boot.run.arguments="--jwt.issuer=dummy.com \
+ --POSTGRES_USERNAME=dummy \
+                      --POSTGRES_PASSWORD=dummy \
+                      --POSTGRES_DBNAME=account \
+                      --POSTGRES_SERVICE=localhost:5432"`
  
 ## Build Docker image
 Build docker image using included Dockerfile.
@@ -16,6 +28,9 @@ Build docker image using included Dockerfile.
 
 ## Deploy Docker image locally
 `docker run -e jwt.issuer=dummy.com
+ -e POSTGRES_USERNAME=dummy \
+ -e POSTGRES_PASSWORD=dummy -e POSTGRES_DBNAME=account \
+ -e POSTGRES_SERVICE=localhost:5432
  --publish 8080:8080 imageregistry/jwt-rest-service:1.0`
 
 Test jwt api using using swagger-ui at http://localhost:8080/swagger-ui.html

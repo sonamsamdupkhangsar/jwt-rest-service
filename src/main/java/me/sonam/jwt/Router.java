@@ -53,7 +53,7 @@ public class Router {
     public RouterFunction<ServerResponse> route(Handler handler) {
         LOG.info("building router function");
 
-        return RouterFunctions.route(GET("/create/{clientId}/{groupNames}/{username}/{audience}/{expireField}/{expireIn}").
+        return RouterFunctions.route(GET("/create/{clientUserRole}/{clientId}/{groupNames}/{username}/{audience}/{expireField}/{expireIn}").
                         and(accept(MediaType.APPLICATION_JSON)),
                 handler::createJwt);
     }

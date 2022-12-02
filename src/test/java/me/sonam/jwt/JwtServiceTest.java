@@ -38,13 +38,14 @@ public class JwtServiceTest {
         final String subject = "sonam";
         final int expireInField = Calendar.SECOND;
         final int expireIn = 3;
+        final String clientUserRole = "admin";
 
         //jwt token validate for 10 days
-        Mono<String> stringMono = jwtService.create(clientId, groupNames, subject, audience, expireInField, expireIn);
+        Mono<String> stringMono = jwtService.create(clientUserRole, clientId, groupNames, subject, audience, expireInField, expireIn);
 
         stringMono.subscribe(s -> LOG.info("reponse: {}", s));
 
-        stringMono = jwtService.create(clientId, groupNames, subject, audience, expireInField, expireIn);
+        stringMono = jwtService.create(clientUserRole, clientId, groupNames, subject, audience, expireInField, expireIn);
         stringMono.as(StepVerifier::create).assertNext(jwt -> {
             assertThat(jwt).isNotNull();
             LOG.info("jwt is not null: {}", jwt);

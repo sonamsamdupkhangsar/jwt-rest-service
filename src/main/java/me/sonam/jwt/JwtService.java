@@ -22,10 +22,10 @@ public class JwtService implements Jwt {
     }
 
     @Override
-    public Mono<String> create(String clientId, String groupNames, String subject, String audience, int calendarField, int calendarValue) {
+    public Mono<String> create(String clientUserRole, String clientId, String groupNames, String subject, String audience, int calendarField, int calendarValue) {
         LOG.info("create jwt");
 
-        return jwtCreator.create(clientId, groupNames, subject, audience, calendarField, calendarValue);
+        return jwtCreator.create(clientUserRole, clientId, groupNames, subject, audience, calendarField, calendarValue);
     }
 
     @Override

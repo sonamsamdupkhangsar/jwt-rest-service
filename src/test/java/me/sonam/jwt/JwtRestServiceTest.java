@@ -40,8 +40,9 @@ public class JwtRestServiceTest {
         final int expireIn = 10;
         final String clientId = UUID.randomUUID().toString();
         final String groups = "Admin, Cameramen, Driver, foodballer";
+        final String clientUserRole = "admin";
 
-        final String path = "/create/"+clientId+"/"+groups+"/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn;
+        final String path = "/create/"+clientUserRole+"/" +clientId+"/"+groups+"/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn;
 
         FluxExchangeResult<Map> fluxExchangeResult = client.get().uri(path)
                 .accept(MediaType.APPLICATION_JSON)

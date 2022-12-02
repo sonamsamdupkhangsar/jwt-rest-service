@@ -25,6 +25,7 @@ public class Handler  {
     private final String bearer = "Bearer: ";
 
     public Mono<ServerResponse> createJwt(ServerRequest serverRequest) {
+        String clientUserRole = serverRequest.pathVariable("clientUserRole");
         String clientId = serverRequest.pathVariable("clientId");
         String groupNames = serverRequest.pathVariable("groupNames");
         String username = serverRequest.pathVariable("username");
@@ -35,7 +36,7 @@ public class Handler  {
 
         LOG.info("generating jwt");
 
-        return jwt.create(clientId, groupNames, username, audience, Integer.parseInt(expireField), Integer.parseInt(expireIn))
+        return jwt.create(clientUserRole, clientId, groupNames, username, audience, Integer.parseInt(expireField), Integer.parseInt(expireIn))
                 .flatMap(s -> {
                 Map<String, String> map = new HashMap<>();
                 map.put("token", s);
