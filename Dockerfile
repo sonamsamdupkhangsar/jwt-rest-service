@@ -1,22 +1,9 @@
-# syntax = docker/dockerfile:1.2
-
 FROM maven:3-openjdk-17-slim as build
-
-#ARG IMAGEREGISTRY
 
 WORKDIR /app
 
 COPY pom.xml settings.xml ./
 COPY src ./src
-RUN echo ${IMAGEREGISTRY}
-RUN echo "imageRegistry is : ${IMAGEREGISTRY}"
-RUN --mount=type=secret,id=IMAGEREGISTRY \
-    export IMAGEREGISTRY=$(cat /run/secrets/IMAGEREGISTRY) && \
-    echo "(1) imageRegistry: ${IMAGEREGISTRY}, $IMAGEREGISTRY"
-
-
-RUN echo "(2) imageRegistry: ${IMAGEREGISTRY}"
-
 # use exec shell form to access secret variable as exported env variable
 RUN --mount=type=secret,id=PERSONAL_ACCESS_TOKEN \
    export PERSONAL_ACCESS_TOKEN=$(cat /run/secrets/PERSONAL_ACCESS_TOKEN) && \
