@@ -47,7 +47,7 @@ public class JwtRestServiceTest {
         final String groups = "Admin, Cameramen, Driver, foodballer";
         final String clientUserRole = "admin";
 
-        final String path = "http://localhost:8081/jwt-rest-service/create/" + clientUserRole + "/" + clientId + "/" + groups + "/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn;
+        final String path = "/jwt-rest-service/create/" + clientUserRole + "/" + clientId + "/" + groups + "/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn;
 
         FluxExchangeResult<Map> fluxExchangeResult = client.get().uri(path)
                 .accept(MediaType.APPLICATION_JSON)
@@ -64,7 +64,7 @@ public class JwtRestServiceTest {
                 }).verifyComplete();
     }
 
-    @Test
+  //  @Test
     public void getPublicKeyTest() {
         final UUID keyId = UUID.fromString("f88369b-b86d-4e5d-a9eb-fcd9261fa61c");
         getPublicKey(keyId);
