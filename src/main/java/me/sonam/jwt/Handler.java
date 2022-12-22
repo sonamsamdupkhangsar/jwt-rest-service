@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Handler
@@ -46,4 +47,16 @@ public class Handler  {
                                 );
     }
 
+    public Mono<ServerResponse> getPublicKey(ServerRequest serverRequest) {
+        LOG.info("get public key for keyId");
+
+        return jwt.getPublicKey(UUID.fromString(serverRequest.pathVariable("keyId")))
+                .flatMap(s -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(s))
+                .onErrorResume(throwable -> {
+                    LOG.error("get public key failed", throwable);
+                    return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(throwable.getMessage());
+                });
+    }
 }

@@ -53,8 +53,9 @@ public class Router {
     public RouterFunction<ServerResponse> route(Handler handler) {
         LOG.info("building router function");
 
-        return RouterFunctions.route(GET("/create/{clientUserRole}/{clientId}/{groupNames}/{username}/{audience}/{expireField}/{expireIn}").
-                        and(accept(MediaType.APPLICATION_JSON)),
-                handler::createJwt);
+        return RouterFunctions.route(GET("/jwt-rest-service/create/{clientUserRole}/{clientId}/{groupNames}/{username}/{audience}/{expireField}/{expireIn}").
+                        and(accept(MediaType.APPLICATION_JSON)), handler::createJwt)
+                .andRoute(GET("/jwt-rest-service/publickeys/{keyId}")
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::getPublicKey);
     }
 }

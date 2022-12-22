@@ -1,6 +1,8 @@
 package me.sonam.jwt;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -11,10 +13,13 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,16 +47,59 @@ public class JwtRestServiceTest {
         final String groups = "Admin, Cameramen, Driver, foodballer";
         final String clientUserRole = "admin";
 
-        final String path = "/create/"+clientUserRole+"/" +clientId+"/"+groups+"/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn;
+        final String path = "/jwt-rest-service/create/" + clientUserRole + "/" + clientId + "/" + groups + "/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn;
 
         FluxExchangeResult<Map> fluxExchangeResult = client.get().uri(path)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange().expectStatus().isOk()
                 .returnResult(Map.class);
+
         StepVerifier.create(fluxExchangeResult.getResponseBody())
                 .assertNext(map -> {
                     LOG.info("assert token not empty");
                     assertThat(map.get("token")).isNotNull();
                 }).verifyComplete();
+    }
+
+    public void getPublicKey(UUID keyId) {
+        final String path = "/jwt-rest-service/publickeys/" + keyId;
+
+        LOG.info("get public key");
+        EntityExchangeResult<Map> result = client.get().uri(path)
+                .exchange()
+                .expectStatus().isOk().expectBody(Map.class).returnResult();
+        LOG.info("publicKey: {}", result.getResponseBody().get("publicKey"));
+
+        LOG.info("response: {}", result.getResponseBody());
+
+        //return Mono.just(result.getResponseBody().get("publicKey").toString());
+/*
+                .exchange().expectStatus().isOk()
+                .returnResult(Map.class).getResponseBody()
+                .single().map(map -> map.get("publicKey").toString())
+                .flatMap(o -> Mono.just(o.toString()));
+*/
+    }
+
+    public UUID getKeyId(String jwtToken) {
+        LOG.debug("getKeyId for jwtToken by marshaling string to SonamsJwtHeader class");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+
+        String[] chunks = jwtToken.split("\\.");
+
+        String header = new String(decoder.decode(chunks[0]));
+        LOG.debug("header: {}", header);
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            SonamsJwtHeader sonamsJwtHeader = mapper.readValue(header, SonamsJwtHeader.class);
+            LOG.debug("returning keyId: {}", sonamsJwtHeader.getKeyId());
+            return sonamsJwtHeader.getKeyId();
+        } catch (JsonProcessingException e) {
+            LOG.error("failed to convert header to sonams jwt header", e);
+            return null;
+        }
+
     }
 }
