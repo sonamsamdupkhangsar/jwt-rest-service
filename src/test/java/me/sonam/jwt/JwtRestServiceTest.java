@@ -47,7 +47,7 @@ public class JwtRestServiceTest {
         final String groups = "Admin, Cameramen, Driver, foodballer";
         final String clientUserRole = "admin";
 
-        final String path = "/jwt-rest-service/create/" + clientUserRole + "/" + clientId + "/" + groups + "/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn;
+        final String path = "http://localhost:8081/jwt-rest-service/create/" + clientUserRole + "/" + clientId + "/" + groups + "/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn;
 
         FluxExchangeResult<Map> fluxExchangeResult = client.get().uri(path)
                 .accept(MediaType.APPLICATION_JSON)
@@ -58,17 +58,26 @@ public class JwtRestServiceTest {
                 .assertNext(map -> {
                     LOG.info("assert token not empty");
                     assertThat(map.get("token")).isNotNull();
+                    LOG.info("token: {}", map.get("token"));
+                    UUID keyId = getKeyId(map.get("token").toString());
+                    LOG.info("keyId: {}", keyId);
                 }).verifyComplete();
     }
 
+    @Test
+    public void getPublicKeyTest() {
+        final UUID keyId = UUID.fromString("f88369b-b86d-4e5d-a9eb-fcd9261fa61c");
+        getPublicKey(keyId);
+    }
+
     public void getPublicKey(UUID keyId) {
-        final String path = "/jwt-rest-service/publickeys/" + keyId;
+        final String path = "http://localhost:8081/jwt-rest-service/publickeys/" + keyId;
 
         LOG.info("get public key");
-        EntityExchangeResult<Map> result = client.get().uri(path)
+        EntityExchangeResult<String> result = client.get().uri(path)
                 .exchange()
-                .expectStatus().isOk().expectBody(Map.class).returnResult();
-        LOG.info("publicKey: {}", result.getResponseBody().get("publicKey"));
+                .expectStatus().isOk().expectBody(String.class).returnResult();
+        LOG.info("publicKey: {}", result.getResponseBody());
 
         LOG.info("response: {}", result.getResponseBody());
 
