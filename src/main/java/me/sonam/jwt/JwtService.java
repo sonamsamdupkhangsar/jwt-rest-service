@@ -30,7 +30,7 @@ public class JwtService implements Jwt {
 
     @Override
     public Mono<String> getPublicKey(UUID keyId) {
-        LOG.info("get public key for keyId");
+        LOG.info("get public key for keyId: {}", keyId);
 
         return jwtCreator.getPublicKey(keyId);
     }
