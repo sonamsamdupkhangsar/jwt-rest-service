@@ -21,9 +21,16 @@ jwt:
   issuer: ${JWT_ISSUER}
 
 spring:
+  application:
+    name: jwt-rest-service
   r2dbc:
     url: r2dbc:postgresql://${POSTGRES_SERVICE}/${POSTGRES_DBNAME}
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
     properties:
       sslMode:  ${DB_SSLMODE}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: https://${EUREKA_USER}:${EUREKA_PASSWORD}@discovery-service.sonam.cloud/eureka
