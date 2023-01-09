@@ -16,7 +16,7 @@ management:
 
 server:
   #  port: 8080
-  port: 8080
+  port: 9001
 
 jwt:
   issuer: sonam.cloud
@@ -33,5 +33,6 @@ EUREKA_PASSWORD: test
 
 eureka:
   client:
+    enabled: false
     serviceUrl:
       defaultZone: https://${EUREKA_USER}:${EUREKA_PASSWORD}@discovery-service.sonam.cloud/eureka
