@@ -1,5 +1,6 @@
 package me.sonam.jwt;
 
+import me.sonam.security.jwt.JwtBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,26 +26,17 @@ public class Handler  {
 
     private final String bearer = "Bearer: ";
 
-    public Mono<ServerResponse> createJwt(ServerRequest serverRequest) {
-        String clientUserRole = serverRequest.pathVariable("clientUserRole");
-        String clientId = serverRequest.pathVariable("clientId");
-        String groupNames = serverRequest.pathVariable("groupNames");
-        String username = serverRequest.pathVariable("username");
-        String audience = serverRequest.pathVariable("audience");
-        String expireField = serverRequest.pathVariable("expireField");
-        String expireIn = serverRequest.pathVariable("expireIn");
+    public Mono<ServerResponse> create(ServerRequest serverRequest) {
+        LOG.info("create jwt token");
 
-
-        LOG.info("generating jwt");
-
-        return jwt.create(clientUserRole, clientId, groupNames, username, audience, Integer.parseInt(expireField), Integer.parseInt(expireIn))
+        return jwt.create(serverRequest.bodyToMono(JwtBody.class))
                 .flatMap(s -> {
-                Map<String, String> map = new HashMap<>();
-                map.put("token", s);
-                        return ServerResponse.ok()
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(map);}
-                                );
+                    Map<String, String> map = new HashMap<>();
+                    map.put("token", s);
+                    return ServerResponse.ok()
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(map);}
+                );
     }
 
     public Mono<ServerResponse> getPublicKey(ServerRequest serverRequest) {

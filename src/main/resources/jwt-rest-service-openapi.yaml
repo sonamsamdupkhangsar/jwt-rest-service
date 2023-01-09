@@ -1,0 +1,74 @@
+openapi: "3.0.2"
+info:
+  title: Jwt rest service Api
+  description: This service will issue Jwt claims for a user
+  version: "1.0"
+servers:
+  - url: http://localhost:8081
+    description: Local development JWT claim server
+paths:
+  /jwts:
+    post:
+      summary: Returns a JWT token
+      description: This will return a JWT claim based on the request body.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sub:
+                  type: string
+                  description: Unique identifer for the end user
+                scope:
+                  type: string
+                  description: Identifies the access for the resource as identified in the audience.
+                clientId:
+                  type: string
+                  description: A unique value for the application
+                aud:
+                  type: string
+                  description: The intendend recipients of this token, valid only for certain resource, endpoints.
+                jwtExpiresInDuratin:
+                  type: string
+                  description: This is a Java duration type where this JWT is valid in terms of time like 30 seconds for example.
+      responses:
+        '200':
+          description: The JWT claim is created successfully with public key pair.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          description: Failed to create JWT claim
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /jwts/publickeys/{keyId}:
+    get:
+      summary: Returns the public key associated with the key id
+      parameters:
+        - name: keyId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully returning a public key for this key id
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Failed to get public key associated with this key id
+          content:
+            application/json:
+              schema:
+                type: string

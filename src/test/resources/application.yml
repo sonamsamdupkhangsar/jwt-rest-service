@@ -1,6 +1,6 @@
 logging:
   level:
-    root: warn
+    root: info
     me:
       sonam: trace
 info:
@@ -28,4 +28,10 @@ spring:
     name: sa
     password:
 
-permitPaths: /create/*
+EUREKA_USER: test
+EUREKA_PASSWORD: test
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: https://${EUREKA_USER}:${EUREKA_PASSWORD}@discovery-service.sonam.cloud/eureka

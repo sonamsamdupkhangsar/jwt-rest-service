@@ -3,6 +3,7 @@ package me.sonam.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.sonam.security.jwt.JwtBody;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
@@ -39,55 +41,40 @@ public class JwtRestServiceTest {
 
     @Test
     public void getJwt() {
-        final String audience = "sonam.cloud";
-        final String subject = "sonam";
-        final int expireInField = 5;
-        final int expireIn = 10;
-        final String clientId = UUID.randomUUID().toString();
-        final String groups = "Admin, Cameramen, Driver, foodballer";
-        final String clientUserRole = "admin";
+        final String clientId = "sonam-123-322";
+        final String subject = UUID.randomUUID().toString();
+        final String audience = "email"; //the resource to access
+        final String scopes = "email.write";
+        Duration tenSecondsDuration = Duration.ofSeconds(10);
 
-        final String path = "/jwt-rest-service/create/" + clientUserRole + "/" + clientId + "/" + groups + "/" + subject + "/" + audience + "/" + expireInField + "/" + expireIn;
+        JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, tenSecondsDuration.toString());
 
-        FluxExchangeResult<Map> fluxExchangeResult = client.get().uri(path)
+        EntityExchangeResult<Map> entityExchangeResult = client.post().uri("/jwts")
+                .bodyValue(jwtBody)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange().expectStatus().isOk()
-                .returnResult(Map.class);
+                .expectBody(Map.class).returnResult();
 
-        StepVerifier.create(fluxExchangeResult.getResponseBody())
-                .assertNext(map -> {
-                    LOG.info("assert token not empty");
-                    assertThat(map.get("token")).isNotNull();
-                    LOG.info("token: {}", map.get("token"));
-                    UUID keyId = getKeyId(map.get("token").toString());
-                    LOG.info("keyId: {}", keyId);
-                }).verifyComplete();
-    }
+        Map<String, String> map = entityExchangeResult.getResponseBody();
+        LOG.info("assert token not empty");
+        assertThat(map.get("token")).isNotNull();
+        LOG.info("token: {}", map.get("token"));
+        UUID keyId = getKeyId(map.get("token").toString());
+        LOG.info("keyId: {}", keyId);
 
-  //  @Test
-    public void getPublicKeyTest() {
-        final UUID keyId = UUID.fromString("f88369b-b86d-4e5d-a9eb-fcd9261fa61c");
         getPublicKey(keyId);
     }
 
     public void getPublicKey(UUID keyId) {
-        final String path = "http://localhost:8081/jwt-rest-service/publickeys/" + keyId;
+        final String path = "/jwts/publickeys/" + keyId;
 
         LOG.info("get public key");
         EntityExchangeResult<String> result = client.get().uri(path)
                 .exchange()
                 .expectStatus().isOk().expectBody(String.class).returnResult();
         LOG.info("publicKey: {}", result.getResponseBody());
+        assertThat(result.getResponseBody()).isNotNull();
 
-        LOG.info("response: {}", result.getResponseBody());
-
-        //return Mono.just(result.getResponseBody().get("publicKey").toString());
-/*
-                .exchange().expectStatus().isOk()
-                .returnResult(Map.class).getResponseBody()
-                .single().map(map -> map.get("publicKey").toString())
-                .flatMap(o -> Mono.just(o.toString()));
-*/
     }
 
     public UUID getKeyId(String jwtToken) {
@@ -97,14 +84,16 @@ public class JwtRestServiceTest {
         String[] chunks = jwtToken.split("\\.");
 
         String header = new String(decoder.decode(chunks[0]));
+        final String payload = new String(decoder.decode(chunks[1]));
         LOG.debug("header: {}", header);
+        LOG.info("payload: {}", payload);
 
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            SonamsJwtHeader sonamsJwtHeader = mapper.readValue(header, SonamsJwtHeader.class);
-            LOG.debug("returning keyId: {}", sonamsJwtHeader.getKeyId());
-            return sonamsJwtHeader.getKeyId();
+            JwtBody jwtBody = mapper.readValue(payload, JwtBody.class);
+            LOG.debug("returning keyId: {}", jwtBody.getKeyId());
+            return jwtBody.getKeyId();
         } catch (JsonProcessingException e) {
             LOG.error("failed to convert header to sonams jwt header", e);
             return null;

@@ -1,5 +1,6 @@
 package me.sonam.jwt;
 
+import me.sonam.security.jwt.JwtBody;
 import me.sonam.security.jwt.JwtCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,13 @@ public class JwtService implements Jwt {
     public JwtService() {
     }
 
-    @Override
-    public Mono<String> create(String clientUserRole, String clientId, String groupNames, String subject, String audience, int calendarField, int calendarValue) {
-        LOG.info("create jwt");
 
-        return jwtCreator.create(clientUserRole, clientId, groupNames, subject, audience, calendarField, calendarValue);
+    @Override
+    public Mono<String> create(Mono<JwtBody> jwtBodyMono) {
+        LOG.info("create jwt token using the body");
+
+        return jwtBodyMono.flatMap(jwtBody -> jwtCreator.create(jwtBody));
+
     }
 
     @Override

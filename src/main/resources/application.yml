@@ -2,7 +2,7 @@ logging:
   level:
     root: error
     me:
-      sonam: info
+      sonam: debug
 info:
   app:
     name: Springboot me.sonam.Application
@@ -27,5 +27,3 @@ spring:
     password: ${POSTGRES_PASSWORD}
     properties:
       sslMode:  ${DB_SSLMODE}
-
-permitPaths: /create/*
