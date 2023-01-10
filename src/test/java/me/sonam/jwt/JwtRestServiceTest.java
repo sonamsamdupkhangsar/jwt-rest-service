@@ -45,11 +45,10 @@ public class JwtRestServiceTest {
         final String subject = UUID.randomUUID().toString();
         final String audience = "email"; //the resource to access
         final String scopes = "email.write";
-        Duration tenSecondsDuration = Duration.ofSeconds(10);
 
-        JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, tenSecondsDuration.toString());
+        JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, 10);
 
-        EntityExchangeResult<Map> entityExchangeResult = client.post().uri("/jwts")
+        EntityExchangeResult<Map> entityExchangeResult = client.post().uri("/jwts/accesstoken")
                 .bodyValue(jwtBody)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange().expectStatus().isOk()
@@ -62,9 +61,23 @@ public class JwtRestServiceTest {
         UUID keyId = getKeyId(map.get("token").toString());
         LOG.info("keyId: {}", keyId);
 
+        getRestApiKeyId(map.get("token"));
+
         getPublicKey(keyId);
     }
 
+    private void getRestApiKeyId(String jwt) {
+        EntityExchangeResult<Map> entityExchangeResult = client.post().uri("/jwts/keyId")
+                .bodyValue(jwt)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange().expectStatus().isOk()
+                .expectBody(Map.class).returnResult();
+
+        Map<String, String> map = entityExchangeResult.getResponseBody();
+        LOG.info("assert keyId not empty");
+        assertThat(map.get("keyId")).isNotNull();
+        LOG.info("keyId: {}",map.get("keyId"));
+    }
     public void getPublicKey(UUID keyId) {
         final String path = "/jwts/publickeys/" + keyId;
 

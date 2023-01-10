@@ -26,7 +26,7 @@ public class Handler  {
 
     private final String bearer = "Bearer: ";
 
-    public Mono<ServerResponse> create(ServerRequest serverRequest) {
+    public Mono<ServerResponse> createAccessToken(ServerRequest serverRequest) {
         LOG.info("create jwt token");
 
         return jwt.create(serverRequest.bodyToMono(JwtBody.class))
@@ -43,10 +43,31 @@ public class Handler  {
         LOG.info("get public key for keyId");
 
         return jwt.getPublicKey(UUID.fromString(serverRequest.pathVariable("keyId")))
-                .flatMap(s -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(s))
+                .flatMap(s -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("publicKey", s);
+                    return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(map);
+                    }
+                )
                 .onErrorResume(throwable -> {
                     LOG.error("get public key failed", throwable);
+                    return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(throwable.getMessage());
+                });
+    }
+
+    public Mono<ServerResponse> getKeyId(ServerRequest serverRequest) {
+        LOG.info("get keyId from jwt");
+
+        return jwt.getKeyId(serverRequest.bodyToMono(String.class))
+                .flatMap(keyId -> {
+                            Map<String, String> map = new HashMap<>();
+                            map.put("keyId", keyId);
+                            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(map);
+                        }
+                )
+                .onErrorResume(throwable -> {
+                    LOG.error("get key Id failed", throwable);
                     return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(throwable.getMessage());
                 });

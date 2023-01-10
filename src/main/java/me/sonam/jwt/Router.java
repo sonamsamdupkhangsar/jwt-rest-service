@@ -22,8 +22,9 @@ public class Router {
     public RouterFunction<ServerResponse> route(Handler handler) {
         LOG.info("building router function");
 
-        return RouterFunctions.route(POST("/jwts").
-                        and(accept(MediaType.APPLICATION_JSON)), handler::create)
+        return RouterFunctions.route(POST("/jwts/accesstoken").
+                        and(accept(MediaType.APPLICATION_JSON)), handler::createAccessToken)
+                .andRoute(POST("/jwts/keyId"). and(accept(MediaType.APPLICATION_JSON)), handler::getKeyId)
                 .andRoute(GET("/jwts/publickeys/{keyId}")
                         .and(accept(MediaType.APPLICATION_JSON)), handler::getPublicKey);
 

@@ -13,11 +13,15 @@ Use `mvn -s settings.xml -U test` to build locally.
 
 
 ## Run locally
-`mvn spring-boot:run -Dspring-boot.run.arguments="--jwt.issuer=dummy.com \
- --POSTGRES_USERNAME=dummy \
-                      --POSTGRES_PASSWORD=dummy \
-                      --POSTGRES_DBNAME=account \
-                      --POSTGRES_SERVICE=localhost:5432"`
+```
+mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8081 --jwt.issuer=sonam.us \
+    --POSTGRES_USERNAME=test \
+    --POSTGRES_PASSWORD=test \
+    --POSTGRES_DBNAME=jwt \
+    --POSTGRES_SERVICE=localhost:5432
+    --DB_SSLMODE=disable
+    --eureka.client.enabled=false"
+```
  
 ## Build Docker image
 Build docker image using included Dockerfile.

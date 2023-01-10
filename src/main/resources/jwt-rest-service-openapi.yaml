@@ -5,12 +5,12 @@ info:
   version: "1.0"
 servers:
   - url: http://localhost:8081
-    description: Local development JWT claim server
+    description: local development jwt-rest-service server
 paths:
-  /jwts:
+  /jwts/accesstoken:
     post:
-      summary: Returns a JWT token
-      description: This will return a JWT claim based on the request body.
+      summary: Returns a JWT access token
+      description: This will return a access token with JWT claim based on the request body.
       requestBody:
         content:
           application/json:
@@ -29,12 +29,18 @@ paths:
                 aud:
                   type: string
                   description: The intendend recipients of this token, valid only for certain resource, endpoints.
-                jwtExpiresInDuratin:
-                  type: string
-                  description: This is a Java duration type where this JWT is valid in terms of time like 30 seconds for example.
+                expiresInSeconds:
+                  type: integer
+                  description: This value indicates the Jwt token expiration in seconds.
+            example:
+              sub: 01947sxd184
+              scope: authentication
+              clientId: azudp31223
+              aud: backend
+              expiresInSeconds: 300
       responses:
         '200':
-          description: The JWT claim is created successfully with public key pair.
+          description: The access JWT claim is created successfully with public key pair.
           content:
             application/json:
               schema:
@@ -43,12 +49,37 @@ paths:
                   token:
                     type: string
         '400':
-          description: Failed to create JWT claim
+          description: Failed to create access JWT claim
           content:
             application/json:
               schema:
                 type: string
-
+  /jwts/keyId:
+    post:
+      summary: This is a utility rest api for getting the keyId from the jwt token
+      description: Get the key id from the jwt token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Successfully got the key id from the jwt token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keyId:
+                    type: string
+                    format: uuid
+        '400':
+          description: Failed to parse key id from the jwt token
+          content:
+            text/palin:
+              schema:
+                type: string
   /jwts/publickeys/{keyId}:
     get:
       summary: Returns the public key associated with the key id
@@ -65,10 +96,13 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  publicKey:
+                    type: string
         '400':
           description: Failed to get public key associated with this key id
           content:
-            application/json:
+            text/plain:
               schema:
                 type: string
