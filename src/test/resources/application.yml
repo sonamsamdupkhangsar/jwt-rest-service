@@ -1,6 +1,6 @@
 logging:
   level:
-    root: warn
+    root: info
     me:
       sonam: trace
 info:
@@ -16,7 +16,7 @@ management:
 
 server:
   #  port: 8080
-  port: 8080
+  port: 9001
 
 jwt:
   issuer: sonam.cloud
@@ -28,4 +28,11 @@ spring:
     name: sa
     password:
 
-permitPaths: /create/*
+EUREKA_USER: test
+EUREKA_PASSWORD: test
+
+eureka:
+  client:
+    enabled: false
+    serviceUrl:
+      defaultZone: https://${EUREKA_USER}:${EUREKA_PASSWORD}@discovery-service.sonam.cloud/eureka

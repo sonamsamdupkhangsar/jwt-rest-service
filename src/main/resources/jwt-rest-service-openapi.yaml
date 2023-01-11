@@ -1,0 +1,108 @@
+openapi: "3.0.2"
+info:
+  title: Jwt rest service Api
+  description: This service will issue Jwt claims for a user
+  version: "1.0"
+servers:
+  - url: http://localhost:8081
+    description: local development jwt-rest-service server
+paths:
+  /jwts/accesstoken:
+    post:
+      summary: Returns a JWT access token
+      description: This will return a access token with JWT claim based on the request body.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sub:
+                  type: string
+                  description: Unique identifer for the end user
+                scope:
+                  type: string
+                  description: Identifies the access for the resource as identified in the audience.
+                clientId:
+                  type: string
+                  description: A unique value for the application
+                aud:
+                  type: string
+                  description: The intendend recipients of this token, valid only for certain resource, endpoints.
+                expiresInSeconds:
+                  type: integer
+                  description: This value indicates the Jwt token expiration in seconds.
+            example:
+              sub: 01947sxd184
+              scope: authentication
+              clientId: azudp31223
+              aud: backend
+              expiresInSeconds: 300
+      responses:
+        '200':
+          description: The access JWT claim is created successfully with public key pair.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          description: Failed to create access JWT claim
+          content:
+            application/json:
+              schema:
+                type: string
+  /jwts/keyId:
+    post:
+      summary: This is a utility rest api for getting the keyId from the jwt token
+      description: Get the key id from the jwt token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Successfully got the key id from the jwt token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keyId:
+                    type: string
+                    format: uuid
+        '400':
+          description: Failed to parse key id from the jwt token
+          content:
+            text/palin:
+              schema:
+                type: string
+  /jwts/publickeys/{keyId}:
+    get:
+      summary: Returns the public key associated with the key id
+      parameters:
+        - name: keyId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully returning a public key for this key id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  publicKey:
+                    type: string
+        '400':
+          description: Failed to get public key associated with this key id
+          content:
+            text/plain:
+              schema:
+                type: string

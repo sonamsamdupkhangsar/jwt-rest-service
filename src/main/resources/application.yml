@@ -2,7 +2,7 @@ logging:
   level:
     root: error
     me:
-      sonam: info
+      sonam: debug
 info:
   app:
     name: Springboot me.sonam.Application
@@ -21,6 +21,8 @@ jwt:
   issuer: ${JWT_ISSUER}
 
 spring:
+  application:
+    name: jwt-rest-service
   r2dbc:
     url: r2dbc:postgresql://${POSTGRES_SERVICE}/${POSTGRES_DBNAME}
     username: ${POSTGRES_USERNAME}
@@ -28,4 +30,7 @@ spring:
     properties:
       sslMode:  ${DB_SSLMODE}
 
-permitPaths: /create/*
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: https://${EUREKA_USER}:${EUREKA_PASSWORD}@discovery-service.sonam.cloud/eureka

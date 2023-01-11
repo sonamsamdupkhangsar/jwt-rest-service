@@ -1,5 +1,6 @@
 package me.sonam.jwt;
 
+import me.sonam.security.jwt.JwtBody;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -32,20 +34,20 @@ public class JwtServiceTest {
     // get a jwt and validate the jwt validation is true or is is valid
     @Test
     public void createJwtAndValidate() {
-        String clientId = UUID.randomUUID().toString();
-        String groupNames = "admin, user";
-        final String audience = "sonam.cloud";
-        final String subject = "sonam";
-        final int expireInField = Calendar.SECOND;
-        final int expireIn = 3;
-        final String clientUserRole = "admin";
+        final String clientId = "sonam-123-322";
+        final String subject = UUID.randomUUID().toString();
+        LOG.info("uuid: {}", UUID.randomUUID());
+        final String audience = "email"; //the resource to access
+        final String scopes = "email.write";
+
+        JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, 10);
 
         //jwt token validate for 10 days
-        Mono<String> stringMono = jwtService.create(clientUserRole, clientId, groupNames, subject, audience, expireInField, expireIn);
+        Mono<String> stringMono = jwtService.create(Mono.just(jwtBody));
 
         stringMono.subscribe(s -> LOG.info("reponse: {}", s));
 
-        stringMono = jwtService.create(clientUserRole, clientId, groupNames, subject, audience, expireInField, expireIn);
+        stringMono = jwtService.create(Mono.just(jwtBody));
         stringMono.as(StepVerifier::create).assertNext(jwt -> {
             assertThat(jwt).isNotNull();
             LOG.info("jwt is not null: {}", jwt);

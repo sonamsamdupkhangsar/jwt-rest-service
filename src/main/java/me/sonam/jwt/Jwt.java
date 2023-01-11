@@ -1,11 +1,12 @@
 package me.sonam.jwt;
 
+import me.sonam.security.jwt.JwtBody;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
 import java.util.UUID;
 
 public interface Jwt {
-    Mono<String> create(String clientUserRole, String clientId, String groupNames, String subject, String audience, int calendarField, int calendarValue);
+    Mono<String> create(Mono<JwtBody> jwtBodyMono);
     Mono<String> getPublicKey(UUID keyId);
+    Mono<String> getKeyId(Mono<String> jwt);
 }
