@@ -29,6 +29,12 @@ paths:
                 aud:
                   type: string
                   description: The intendend recipients of this token, valid only for certain resource, endpoints.
+                role:
+                  type: string
+                  description: The role of this user in this application.
+                groups:
+                  type: string
+                  description: The groups this user belongs
                 expiresInSeconds:
                   type: integer
                   description: This value indicates the Jwt token expiration in seconds.
@@ -37,6 +43,8 @@ paths:
               scope: authentication
               clientId: azudp31223
               aud: backend
+              role: user
+              groups: email, manager
               expiresInSeconds: 300
       responses:
         '200':

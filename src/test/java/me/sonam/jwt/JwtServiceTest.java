@@ -39,8 +39,10 @@ public class JwtServiceTest {
         LOG.info("uuid: {}", UUID.randomUUID());
         final String audience = "email"; //the resource to access
         final String scopes = "email.write";
+        final String role = "user";
+        final String groups = "email, messaging";
 
-        JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, 10);
+        JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, role, groups, 10);
 
         //jwt token validate for 10 days
         Mono<String> stringMono = jwtService.create(Mono.just(jwtBody));

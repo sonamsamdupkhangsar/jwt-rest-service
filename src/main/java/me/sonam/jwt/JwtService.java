@@ -45,26 +45,6 @@ public class JwtService implements Jwt {
     @Override
     public Mono<String> getKeyId(Mono<String> jwtMono) {
         LOG.info("get keyId from jwt");
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return jwtMono.flatMap(jwt -> {
-            try {
-                Base64.Decoder decoder = Base64.getUrlDecoder();
-
-                String[] chunks = jwt.split("\\.");
-                if (chunks.length >= 2) {
-                    final String payload = new String(decoder.decode(chunks[1]));
-
-                    JwtBody jwtBody = objectMapper.readValue(payload, JwtBody.class);
-                    return Mono.just(jwtBody);
-                }
-                else {
-                    return Mono.error(new me.sonam.jwt.JwtException("jwt is invalid, jwt split is less than 2"));
-                }
-            } catch (JsonProcessingException e) {
-                LOG.error("failed to marshal to jwtBody", e);
-                return Mono.error(new JwtException("Failed to convert the jwt token to get keyId, error: "+ e.getMessage()));
-            }
-        }).map(jwtBody -> jwtBody.getKeyId().toString());
+        return jwtMono.flatMap(jwt -> jwtCreator.getKeyId(jwt));
     }
 }
