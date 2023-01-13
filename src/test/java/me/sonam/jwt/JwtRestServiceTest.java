@@ -45,8 +45,10 @@ public class JwtRestServiceTest {
         final String subject = UUID.randomUUID().toString();
         final String audience = "email"; //the resource to access
         final String scopes = "email.write";
+        final String role = "user";
+        final String groups = "email, messaging";
 
-        JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, 10);
+        JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, role, groups, 10);
 
         EntityExchangeResult<Map> entityExchangeResult = client.post().uri("/jwts/accesstoken")
                 .bodyValue(jwtBody)

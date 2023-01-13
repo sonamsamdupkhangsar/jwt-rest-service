@@ -31,11 +31,11 @@ Build docker image using included Dockerfile.
 `docker push imageregistry/jwt-rest-service:1.0`
 
 ## Deploy Docker image locally
-`docker run -e jwt.issuer=dummy.com
- -e POSTGRES_USERNAME=dummy \
- -e POSTGRES_PASSWORD=dummy -e POSTGRES_DBNAME=account \
+`docker run -e jwt.issuer=sonam.us
+ -e POSTGRES_USERNAME=test \
+ -e POSTGRES_PASSWORD=test -e POSTGRES_DBNAME=jwt \
  -e POSTGRES_SERVICE=localhost:5432
- --publish 8080:8080 imageregistry/jwt-rest-service:1.0`
+ --publish 8081:8080 imageregistry/jwt-rest-service:1.0`
 
 Test jwt api using using swagger-ui at http://localhost:8080/swagger-ui.html
 
