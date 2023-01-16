@@ -43,7 +43,7 @@ public class Application {
         LOG.info("allow cors filter");
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.setMaxAge(8000L);
-        corsConfig.addAllowedOrigin("*");
+        corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:8080", "https://swaggerui.sonam.cloud"));
         corsConfig.addAllowedMethod("GET");
         corsConfig.addAllowedMethod("POST");
         corsConfig.addAllowedHeader("Content-Type");
