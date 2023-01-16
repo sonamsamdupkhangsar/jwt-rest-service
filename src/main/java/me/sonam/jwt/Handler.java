@@ -43,12 +43,7 @@ public class Handler  {
         LOG.info("get public key for keyId");
 
         return jwt.getPublicKey(UUID.fromString(serverRequest.pathVariable("keyId")))
-                .flatMap(s -> {
-                    Map<String, String> map = new HashMap<>();
-                    map.put("publicKey", s);
-                    return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(map);
-                    }
-                )
+                .flatMap(s -> ServerResponse.ok().contentType(MediaType.TEXT_PLAIN).bodyValue(s))
                 .onErrorResume(throwable -> {
                     LOG.error("get public key failed", throwable);
                     return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON)
