@@ -19,7 +19,7 @@ server:
   port: 9001
 
 jwt:
-  issuer: sonam.cloud
+  issuer: https://www.sonam.cloud/jwts
 
 
 spring:

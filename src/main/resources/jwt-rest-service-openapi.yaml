@@ -85,7 +85,7 @@ paths:
         '400':
           description: Failed to parse key id from the jwt token
           content:
-            text/palin:
+            text/plain:
               schema:
                 type: string
   /jwts/publickeys/{keyId}:
@@ -102,12 +102,9 @@ paths:
         '200':
           description: Successfully returning a public key for this key id
           content:
-            application/json:
+            text/plain:
               schema:
-                type: object
-                properties:
-                  publicKey:
-                    type: string
+                type: string
         '400':
           description: Failed to get public key associated with this key id
           content:

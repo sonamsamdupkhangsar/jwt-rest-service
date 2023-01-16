@@ -11,8 +11,14 @@ This service is consumed by the [authentication-rest-service](https://github.com
 Use the settings.xml file to build locally or on github.  It contains reference to pull down `jwt-issuer` library from github maven repository.
 Use `mvn -s settings.xml -U test` to build locally.
 
+## Run locally using profile
+Use the following to run local profile which will pick up properties defined in the `application-local.yml` :
 
-## Run locally
+```
+mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=local"
+```
+or use the following to override:
+
 ```
 mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8081 --jwt.issuer=sonam.us \
     --POSTGRES_USERNAME=test \
