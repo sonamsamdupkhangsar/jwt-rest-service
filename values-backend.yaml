@@ -82,7 +82,7 @@ envs:
   - name: DB_SSLMODE
     value: REQUIRE
   - name: JWT_ISSUER
-    value: sonam.cloud
+    value: https://www.sonam.cloud/jwts
 
 health:
   liveness:
