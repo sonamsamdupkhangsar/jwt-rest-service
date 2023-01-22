@@ -118,7 +118,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  key: string
+                  key:
+                    type: string
         '400':
           description: Failed to get public key associated with this key id
           content:
@@ -126,7 +127,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  error: string
+                  error:
+                    type: string
   /jwts/hmac/{algorithm}/{key}:
     post:
       summary: This endpoint will generate a HMAC digest value given a algorithm, data and secret key
