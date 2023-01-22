@@ -3,14 +3,20 @@ info:
   title: Jwt rest service Api
   description: This service will issue Jwt claims for a user
   version: "1.0"
+
+
 servers:
   - url: http://localhost:8081
     description: local development jwt-rest-service server
+
 paths:
   /jwts/accesstoken:
     post:
       summary: Returns a JWT access token
-      description: This will return a access token with JWT claim based on the request body.
+      description: "This will return a access token with JWT claim based on the request body.  This is protected with a Authorization
+                header that uses Hmac authentication.  Generate one using the endpoint '/jwts/hmac'"
+      security:
+        - bearerAuth: [ ]
       requestBody:
         content:
           application/json:
@@ -61,7 +67,10 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  error:
+                    type: string
   /jwts/keyId:
     post:
       summary: This is a utility rest api for getting the keyId from the jwt token
@@ -85,9 +94,12 @@ paths:
         '400':
           description: Failed to parse key id from the jwt token
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  error:
+                    type: string
   /jwts/publickeys/{keyId}:
     get:
       summary: Returns the public key associated with the key id
@@ -102,12 +114,71 @@ paths:
         '200':
           description: Successfully returning a public key for this key id
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  key: string
         '400':
           description: Failed to get public key associated with this key id
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  error: string
+  /jwts/hmac/{algorithm}/{key}:
+    post:
+      summary: This endpoint will generate a HMAC digest value given a algorithm, data and secret key
+      parameters:
+        - name: algorithm
+          in: path
+          required: true
+          schema:
+            type: string
+          example: HmacSHA256
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+          example: sonam123
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  type: string
+              example:
+                sub: 01947sxd184
+                scope: authentication
+                clientId: azudp31223
+                aud: backend
+                role: user
+                groups: email, manager
+                expiresInSeconds: 300
+      responses:
+        '200':
+          description: Successfully generate HMAC digest value.
+          content:
+            application/json:
+              schema:
+                properties:
+                  hmac:
+                    type: string
+        '400':
+          description: Failed to generate hmac digest value.
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    type: string
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: HMAC

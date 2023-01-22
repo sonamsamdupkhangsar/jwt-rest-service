@@ -2,9 +2,11 @@ package me.sonam.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.sonam.jwt.json.HmacBody;
 import me.sonam.security.jwt.JwtBody;
 import me.sonam.security.jwt.JwtCreator;
 import me.sonam.security.jwt.JwtException;
+import me.sonam.security.jwt.PublicKeyJwtCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ public class JwtService implements Jwt {
 
     @Autowired
     private JwtCreator jwtCreator;
+
 
     public JwtService() {
     }
@@ -47,4 +50,20 @@ public class JwtService implements Jwt {
         LOG.info("get keyId from jwt");
         return jwtMono.flatMap(jwt -> jwtCreator.getKeyId(jwt));
     }
+
+    @Override
+    public Mono<String> generateHmac(final String algoirthm, Mono<String> monoData, final String key) {
+        LOG.info("generate hmac");
+        return monoData.flatMap(data ->
+        Mono.just(PublicKeyJwtCreator.getHmac(algoirthm, data, key)));
+    }
+
+    @Override
+    public Mono<String> generateHmac(Mono<HmacBody> hmacBodyMono) {
+        LOG.info("generate hmac2 ");
+        return hmacBodyMono.flatMap(hmacBody -> {
+            LOG.info("hmacBody: {}", hmacBody);
+                 return Mono.just(PublicKeyJwtCreator.getHmac(hmacBody.getAlgorithm(), hmacBody.getData(), hmacBody.getKey()));});
+    }
+
 }

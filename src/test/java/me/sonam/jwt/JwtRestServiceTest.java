@@ -3,7 +3,10 @@ package me.sonam.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.sonam.jwt.json.HmacBody;
 import me.sonam.security.jwt.JwtBody;
+import me.sonam.security.jwt.JwtCreator;
+import me.sonam.security.jwt.PublicKeyJwtCreator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
@@ -26,6 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
@@ -36,22 +41,39 @@ public class JwtRestServiceTest {
     @Autowired
     private WebTestClient client;
 
+    @Autowired
+    private JwtCreator jwtCreator;
+
     @Value("${jwt.issuer}")
     private String issuer;
 
     @Test
     public void getJwt() {
-        final String clientId = "sonam-123-322";
+        final String clientId = "azudp31223";
         final String subject = UUID.randomUUID().toString();
         final String audience = "email"; //the resource to access
         final String scopes = "email.write";
         final String role = "user";
         final String groups = "email, messaging";
+        final String secretKey = "mysecret";
 
-        JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, role, groups, 10);
+        final String json = "{\n" +
+                "  \"sub\": \"01947sxd184\",\n" +
+                "  \"scope\": \"authentication\",\n" +
+                "  \"clientId\": \"azudp31223\",\n" +
+                "  \"aud\": \"backend\",\n" +
+                "  \"role\": \"user\",\n" +
+                "  \"groups\": \"email, manager\",\n" +
+                "  \"expiresInSeconds\": 300\n" +
+                "}\n";
+
+        jwtCreator.generateKey(clientId, secretKey).subscribe(hmacKey1 -> LOG.info("crate a HmacKey: {}", hmacKey1));
+
+        final String hmac = PublicKeyJwtCreator.getHmac(PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name(), json, secretKey);
 
         EntityExchangeResult<Map> entityExchangeResult = client.post().uri("/jwts/accesstoken")
-                .bodyValue(jwtBody)
+                .headers(httpHeaders -> httpHeaders.add(HttpHeaders.AUTHORIZATION, hmac))
+                .bodyValue(json)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange().expectStatus().isOk()
                 .expectBody(Map.class).returnResult();
@@ -66,6 +88,46 @@ public class JwtRestServiceTest {
         getRestApiKeyId(map.get("token"));
 
         getPublicKey(keyId);
+    }
+
+    @Test
+    public void getJwtBadHmac() {
+        final String clientId = "azudp31223";
+        final String secretKey = "mysecret";
+
+        final String originalJson = "{\n" +
+                "  \"sub\": \"01947sxd184\",\n" +
+                "  \"scope\": \"authentication\",\n" +
+                "  \"clientId\": \"azudp31223\",\n" +
+                "  \"aud\": \"backend\",\n" +
+                "  \"role\": \"user\",\n" +
+                "  \"groups\": \"email, manager\",\n" +
+                "  \"expiresInSeconds\": 300\n" +
+                "}";
+
+        final String modifiedJson = "{\n" +
+                "  \"sub\": \"01947sxd184\",\n" +
+                "  \"scope\": \"authentication\",\n" +
+                "  \"clientId\": \"azudp31223\",\n" +
+                "  \"aud\": \"backend\",\n" +
+                "  \"role\": \"user\",\n" +
+                "  \"groups\": \"email, manager\",\n" +
+                "  \"expiresInSeconds\": 300\n" +
+                "}\n";
+
+        jwtCreator.generateKey(clientId, secretKey).subscribe(hmacKey1 -> LOG.info("crate a HmacKey: {}", hmacKey1));
+
+        final String hmac = PublicKeyJwtCreator.getHmac(PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name(), originalJson, secretKey);
+
+        EntityExchangeResult<Map> entityExchangeResult = client.post().uri("/jwts/accesstoken")
+                .headers(httpHeaders -> httpHeaders.add(HttpHeaders.AUTHORIZATION, hmac+"x"))
+                .bodyValue(modifiedJson)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange().expectStatus().isBadRequest()
+                .expectBody(Map.class).returnResult();
+
+        Map<String, String> map = entityExchangeResult.getResponseBody();
+        assertThat(map.get("error")).isEqualTo("failed to create JWT token");
     }
 
     private void getRestApiKeyId(String jwt) {
@@ -84,12 +146,52 @@ public class JwtRestServiceTest {
         final String path = "/jwts/publickeys/" + keyId;
 
         LOG.info("get public key");
-        EntityExchangeResult<String> result = client.get().uri(path)
+        EntityExchangeResult<Map> result = client.get().uri(path)
                 .exchange()
-                .expectStatus().isOk().expectBody(String.class).returnResult();
+                .expectStatus().isOk().expectBody(Map.class).returnResult();
         LOG.info("publicKey: {}", result.getResponseBody());
         assertThat(result.getResponseBody()).isNotNull();
 
+
+    }
+
+    @Test
+    public void getHmac() {
+        LOG.info("generate hmac");
+        final String data = "{" +
+                "  \"sub\": \"01947sxd184\"," +
+                "  \"scope\": \"authentication\"," +
+                "  \"clientId\": \"azudp31223\"," +
+                "  \"aud\": \"backend\"," +
+                "  \"role\": \"user\"," +
+                "  \"groups\": \"email, manager\"," +
+                "  \"expiresInSeconds\": 300" +
+                "}";
+        final String jwtBody = "{\"keyId\":null,\"sub\":\"01947sxd184\",\"scope\":\"authentication\",\"clientId\":\"azudp31223\",\"aud\":\"backend\",\"expiresInSeconds\":300,\"exp\":null,\"iat\":null,\"jti\":null,\"iss\":null,\"role\":\"user\",\"groups\":\"email, manager\"}";
+     ;
+        HmacBody hmacBody = new HmacBody(PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name(), jwtBody, "secretkey");
+        LOG.info("json for hmacBody: {}", getJson(hmacBody));
+
+        client.post().uri("/jwts/hmac")
+                .bodyValue(hmacBody)
+                .exchange().expectStatus().isOk().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
+                    LOG.info("result: {}", mapEntityExchangeResult.getResponseBody());
+                        });
+
+//        LOG.info("result: {}", result.getResponseBody().get("hmac"));
+  //      assertThat(result.getResponseBody().get("hmac")).isNotNull();
+
+    }
+
+    public static String getJson(Object object) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(object);
+        }
+        catch (Exception e) {
+            LOG.error("Failed to get json", e);
+            return null;
+        }
     }
 
     public UUID getKeyId(String jwtToken) {

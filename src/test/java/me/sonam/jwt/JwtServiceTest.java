@@ -1,6 +1,9 @@
 package me.sonam.jwt;
 
 import me.sonam.security.jwt.JwtBody;
+import me.sonam.security.jwt.JwtCreator;
+import me.sonam.security.jwt.JwtException;
+import me.sonam.security.jwt.PublicKeyJwtCreator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -28,6 +31,9 @@ public class JwtServiceTest {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private PublicKeyJwtCreator jwtCreator;
+
     @Value("${jwt.issuer}")
     private String issuer;
 
@@ -41,13 +47,17 @@ public class JwtServiceTest {
         final String scopes = "email.write";
         final String role = "user";
         final String groups = "email, messaging";
+        final String secretKey = "mysecret";
+
+        jwtCreator.generateKey(clientId, secretKey).subscribe(hmacKey1 -> LOG.info("crate a HmacKey: {}", hmacKey1));
 
         JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, role, groups, 10);
+        final String hmac = PublicKeyJwtCreator.getHmac(PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name(), PublicKeyJwtCreator.getJson(jwtBody), secretKey);
 
         //jwt token validate for 10 days
         Mono<String> stringMono = jwtService.create(Mono.just(jwtBody));
 
-        stringMono.subscribe(s -> LOG.info("reponse: {}", s));
+        stringMono.subscribe(s -> LOG.info("reponsee: {}", s));
 
         stringMono = jwtService.create(Mono.just(jwtBody));
         stringMono.as(StepVerifier::create).assertNext(jwt -> {
@@ -56,5 +66,10 @@ public class JwtServiceTest {
 
         }).verifyComplete();
 
+        LOG.info("try another create with an invalid hmac");
+
+       // stringMono = jwtService.create(Mono.just(jwtBody));
+       // stringMono.as(StepVerifier::create).expectError(JwtException.class).verify();
     }
+
 }
