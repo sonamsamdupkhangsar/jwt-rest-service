@@ -177,6 +177,44 @@ paths:
                 properties:
                   error:
                     type: string
+  /jwts/hmackey/{clientId}:
+    post:
+      summary: "This endpoint is called when a application is saved.  The application saved will call this
+                to create a HmacKey."
+      description: This will generate a hmackey entity in the repository with the clientId.
+      parameters:
+        - name: clientId
+          required: true
+          in: path
+          schema:
+            type: string
+            example: azudp31223
+      responses:
+        '201':
+          description: HmacKey is created successfully.  HmacKey is retuned in the response.
+          content:
+            application/json:
+              schema:
+                properties:
+                  clientId:
+                    type: string
+                  hmacMD5Algorithm:
+                    type: string
+                  secretKey:
+                    type: string
+                  example:
+                    clientId: azudp31223
+                    hmacMD5Algorithm: HmacSHA256
+                    secretKey: 1234secret
+        '400':
+          description: Failed to create HmacKey.
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    type: string
+                    example: Bad clientId.
 
 components:
   securitySchemes:

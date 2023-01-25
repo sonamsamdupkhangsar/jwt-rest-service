@@ -7,6 +7,8 @@ import me.sonam.security.jwt.JwtBody;
 import me.sonam.security.jwt.JwtCreator;
 import me.sonam.security.jwt.JwtException;
 import me.sonam.security.jwt.PublicKeyJwtCreator;
+import me.sonam.security.jwt.repo.HmacKeyRepository;
+import me.sonam.security.jwt.repo.entity.HmacKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +16,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.Base64;
-import java.util.UUID;
+import java.security.SecureRandom;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static me.sonam.security.jwt.PublicKeyJwtCreator.getJson;
 
 @Service
 public class JwtService implements Jwt {
@@ -25,6 +32,10 @@ public class JwtService implements Jwt {
     @Autowired
     private JwtCreator jwtCreator;
 
+    @Autowired
+    private HmacKeyRepository hmacKeyRepository;
+
+    private Random random = new SecureRandom();
 
     public JwtService() {
     }
@@ -66,4 +77,46 @@ public class JwtService implements Jwt {
                  return Mono.just(PublicKeyJwtCreator.getHmac(hmacBody.getAlgorithm(), hmacBody.getData(), hmacBody.getKey()));});
     }
 
+    @Override
+    public Mono<String> createHmacKey(String clientId) {
+        LOG.info("create hmacKey entity");
+        final String secretKey = generateSecureRandomPassword();
+
+        return hmacKeyRepository.save(
+                new HmacKey(true, clientId, secretKey, PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name()))
+                .flatMap(hmacKey -> Mono.just(getJson(hmacKey)));
+    }
+
+    public Stream<Character> getRandomSpecialChars(int count) {
+        Random random = new SecureRandom();
+        IntStream specialChars = random.ints(count, 33, 45);
+        return specialChars.mapToObj(data -> (char) data);
+    }
+
+    public String generateSecureRandomPassword() {
+        Stream<Character> pwdStream = Stream.concat(getRandomNumbers(2),
+                Stream.concat(getRandomSpecialChars(2),
+                        Stream.concat(getRandomAlphabets(2, true), getRandomAlphabets(4, false))));
+        List<Character> charList = pwdStream.collect(Collectors.toList());
+        Collections.shuffle(charList);
+        String password = charList.stream()
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString();
+        return password;
+    }
+
+    public Stream<Character> getRandomNumbers(int count) {
+        IntStream numbers = random.ints(count, 48, 57);
+        return numbers.mapToObj(data -> (char) data);
+    }
+
+    public Stream<Character> getRandomAlphabets(int count, boolean upperCase) {
+        IntStream characters = null;
+        if (upperCase) {
+            characters = random.ints(count, 65, 90);
+        } else {
+            characters = random.ints(count, 97, 122);
+        }
+        return characters.mapToObj(data -> (char) data);
+    }
 }

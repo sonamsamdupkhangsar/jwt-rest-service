@@ -27,7 +27,8 @@ public class Router {
                 .andRoute(POST("/jwts/keyId"). and(accept(MediaType.APPLICATION_JSON)), handler::getKeyId)
                 .andRoute(GET("/jwts/publickeys/{keyId}")
                         .and(accept(MediaType.APPLICATION_JSON)), handler::getPublicKey)
-                .andRoute(POST("/jwts/hmac/{algorithm}/{key}").and(accept(MediaType.APPLICATION_JSON)), handler::generateHmac);
+                .andRoute(POST("/jwts/hmac/{algorithm}/{key}").and(accept(MediaType.APPLICATION_JSON)), handler::generateHmac)
+                .andRoute(POST("/jwts/hmackey/{clientId}").and(accept(MediaType.APPLICATION_JSON)), handler::createHmacKey);
 
     }
 }

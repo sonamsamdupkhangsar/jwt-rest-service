@@ -17,14 +17,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  * This will verify the pact with the remote pact broker
  */
 /*
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Provider("jwt-rest-service")
 @PactBroker(url="https://pactbroker.sonam.cloud")
 */
-public class RemotePactBrokerContractVerificationTest {
 
-   /* @Autowired
+public class RemotePactBrokerContractVerificationTest {
+/*
+    @Autowired
     Router router;
 
     @Autowired

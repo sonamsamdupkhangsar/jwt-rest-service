@@ -118,6 +118,20 @@ public class Handler  {
                 });
     }
 
+    public Mono<ServerResponse> createHmacKey(ServerRequest serverRequest) {
+        LOG.info("create hmacKey for clientId");
+
+        return jwt.createHmacKey(serverRequest.pathVariable("clientId"))
+                .flatMap(hmac ->
+                        ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(getMap(Pair.of("hmacKey", hmac)))
+                )
+                .onErrorResume(throwable -> {
+                    LOG.error("create hmacKey failed", throwable);
+                    return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(getMap(Pair.of("error", "failed to create hmacKey")));
+                });
+    }
+
     private Map<String, String> getMap(Pair<String, String>... pairs){
         Map<String, String> map = new HashMap<>();
 

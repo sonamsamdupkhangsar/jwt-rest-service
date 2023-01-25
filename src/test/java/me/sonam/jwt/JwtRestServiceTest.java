@@ -1,6 +1,7 @@
 package me.sonam.jwt;
 
 
+import au.com.dius.pact.provider.spring.junit5.WebFluxTarget;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.sonam.jwt.json.HmacBody;
@@ -127,7 +128,7 @@ public class JwtRestServiceTest {
                 .expectBody(Map.class).returnResult();
 
         Map<String, String> map = entityExchangeResult.getResponseBody();
-        assertThat(map.get("error")).isEqualTo("failed to create JWT token");
+        assertThat(map.get("error")).isEqualTo("hmac digest does not match");
     }
 
     private void getRestApiKeyId(String jwt) {
@@ -167,13 +168,12 @@ public class JwtRestServiceTest {
                 "  \"groups\": \"email, manager\"," +
                 "  \"expiresInSeconds\": 300" +
                 "}";
-        final String jwtBody = "{\"keyId\":null,\"sub\":\"01947sxd184\",\"scope\":\"authentication\",\"clientId\":\"azudp31223\",\"aud\":\"backend\",\"expiresInSeconds\":300,\"exp\":null,\"iat\":null,\"jti\":null,\"iss\":null,\"role\":\"user\",\"groups\":\"email, manager\"}";
-     ;
-        HmacBody hmacBody = new HmacBody(PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name(), jwtBody, "secretkey");
-        LOG.info("json for hmacBody: {}", getJson(hmacBody));
+        //final String jwtBody = "{\"keyId\":null,\"sub\":\"01947sxd184\",\"scope\":\"authentication\",\"clientId\":\"azudp31223\",\"aud\":\"backend\",\"expiresInSeconds\":300,\"exp\":null,\"iat\":null,\"jti\":null,\"iss\":null,\"role\":\"user\",\"groups\":\"email, manager\"}";;
+        //HmacBody hmacBody = new HmacBody(PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name(), jwtBody, "secretkey");
+        //LOG.info("json for hmacBody: {}", getJson(hmacBody));
 
-        client.post().uri("/jwts/hmac")
-                .bodyValue(hmacBody)
+        client.post().uri("/jwts/hmac/"+PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name()+"/secretkey")
+                .bodyValue(data)
                 .exchange().expectStatus().isOk().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
                     LOG.info("result: {}", mapEntityExchangeResult.getResponseBody());
                         });
