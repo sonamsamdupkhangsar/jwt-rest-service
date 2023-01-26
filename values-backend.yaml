@@ -83,17 +83,19 @@ envs:
     value: REQUIRE
   - name: JWT_ISSUER
     value: https://www.sonam.cloud/jwts
+  - name: jwt-rest-service-public-key-id
+    value: http://jwt-rest-service.backend.svc.cluster.local:80/jwts/publickeys/{keyId}
 
 health:
   liveness:
     path: /api/health/liveness
     port: 8080
-    initialDelaySeconds: 15
+    initialDelaySeconds: 5
     periodSeconds: 5
     failureThreshold: 5
   readiness:
     path: /api/health/readiness
     port: 8080
-    initialDelaySeconds: 15
+    initialDelaySeconds: 5
     periodSeconds: 5
     failureThreshold: 5

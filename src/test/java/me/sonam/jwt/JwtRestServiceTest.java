@@ -4,20 +4,25 @@ package me.sonam.jwt;
 import au.com.dius.pact.provider.spring.junit5.WebFluxTarget;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.sonam.Application;
 import me.sonam.jwt.json.HmacBody;
 import me.sonam.security.jwt.JwtBody;
 import me.sonam.security.jwt.JwtCreator;
 import me.sonam.security.jwt.PublicKeyJwtCreator;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
@@ -29,13 +34,16 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.map;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {Application.class})
 public class JwtRestServiceTest {
     private static final Logger LOG = LoggerFactory.getLogger(JwtRestServiceTest.class);
 
@@ -47,6 +55,9 @@ public class JwtRestServiceTest {
 
     @Value("${jwt.issuer}")
     private String issuer;
+
+    @MockBean
+    private ReactiveJwtDecoder jwtDecoder;
 
     @Test
     public void getJwt() {
@@ -129,6 +140,28 @@ public class JwtRestServiceTest {
 
         Map<String, String> map = entityExchangeResult.getResponseBody();
         assertThat(map.get("error")).isEqualTo("hmac digest does not match");
+    }
+
+    @Test
+    public void createHmacKey() {
+        LOG.info("creat hmac");
+        final String authId = "createHmacAuthId";
+
+        org.springframework.security.oauth2.jwt.Jwt jwt = jwt(authId);
+        when(this.jwtDecoder.decode(anyString())).thenReturn(Mono.just(jwt));
+
+
+        EntityExchangeResult<Map> result = client.post().uri("/jwts/hmackey/1234-client").
+                headers(addJwt(jwt)).exchange().expectStatus().isOk().expectBody(Map.class).returnResult();
+        LOG.info("result: {}", result.getResponseBody());
+
+        assertThat(result.getResponseBody().get("hmacMD5Algorithm")).isEqualTo(PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name());
+        assertThat(result.getResponseBody().get("clientId")).isEqualTo("1234-client");
+        assertThat(result.getResponseBody().get("secretKey")).isNotNull();
+
+        LOG.info("assert we get a bad request or unauthorized without jwt header");
+        client.post().uri("/jwts/hmackey/1234-client").
+                exchange().expectStatus().isUnauthorized();
     }
 
     private void getRestApiKeyId(String jwt) {
@@ -217,4 +250,15 @@ public class JwtRestServiceTest {
         }
 
     }
+
+
+    private org.springframework.security.oauth2.jwt.Jwt jwt(String subjectName) {
+        return new org.springframework.security.oauth2.jwt.Jwt("token", null, null,
+                Map.of("alg", "none"), Map.of("sub", subjectName));
+    }
+
+    private Consumer<HttpHeaders> addJwt(org.springframework.security.oauth2.jwt.Jwt jwt) {
+        return headers -> headers.setBearerAuth(jwt.getTokenValue());
+    }
+
 }

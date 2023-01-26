@@ -123,7 +123,7 @@ public class Handler  {
 
         return jwt.createHmacKey(serverRequest.pathVariable("clientId"))
                 .flatMap(hmac ->
-                        ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(getMap(Pair.of("hmacKey", hmac)))
+                        ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(hmac)
                 )
                 .onErrorResume(throwable -> {
                     LOG.error("create hmacKey failed", throwable);
