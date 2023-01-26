@@ -180,8 +180,10 @@ paths:
   /jwts/hmackey/{clientId}:
     post:
       summary: "This endpoint is called when a application is saved.  The application saved will call this
-                to create a HmacKey."
+                to create a HmacKey.  This requires a JWT bearer token, not a HMAC token."
       description: This will generate a hmackey entity in the repository with the clientId.
+      security:
+        - bearerAuth: [ ]
       parameters:
         - name: clientId
           required: true
@@ -190,7 +192,7 @@ paths:
             type: string
             example: azudp31223
       responses:
-        '201':
+        '200':
           description: HmacKey is created successfully.  HmacKey is retuned in the response.
           content:
             application/json:
@@ -202,10 +204,10 @@ paths:
                     type: string
                   secretKey:
                     type: string
-                  example:
-                    clientId: azudp31223
-                    hmacMD5Algorithm: HmacSHA256
-                    secretKey: 1234secret
+              example:
+                clientId: azudp31223
+                hmacMD5Algorithm: HmacSHA256
+                secretKey: 1234secret
         '400':
           description: Failed to create HmacKey.
           content:

@@ -16,4 +16,4 @@ jwt:
   issuer: https://www.sonam.cloud/jwts
 
 # jwt-rest-service on port 8081 local server
-JWT_REST_SERVICE: http://localhost:8081/jwts/publickeys/{keyId}
+jwt-rest-service-public-key-id: http://localhost:8081/jwts/publickeys/{keyId}
