@@ -17,3 +17,9 @@ jwt:
 
 # jwt-rest-service on port 8081 local server
 jwt-rest-service-public-key-id: http://localhost:8081/jwts/publickeys/{keyId}
+
+hmackeys:
+  - app: '{"clientId":"authentication-rest-service","hmacMD5Algorithm":"HmacMD5","secretKey":"mysecret","active":true, "isNew": true}'
+  - app: '{"clientId":"account-rest-service","hmacMD5Algorithm":"HmacMD5","secretKey":"mysecret","active":true, "isNew": true}'
+  - app: '{"clientId":"user-rest-service","hmacMD5Algorithm":"HmacMD5","secretKey":"mysecret","active":true, "isNew": true}'
+  - app: '{"clientId":"application-rest-service","hmacMD5Algorithm":"HmacMD5","secretKey":"mysecret","active":true, "isNew": true}'

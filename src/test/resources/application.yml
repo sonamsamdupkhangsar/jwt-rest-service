@@ -37,16 +37,19 @@ eureka:
     serviceUrl:
       defaultZone: https://${EUREKA_USER}:${EUREKA_PASSWORD}@discovery-service.sonam.cloud/eureka
 
-me.sonam.jwt-validator:
-  permitpath:
-    - path: /api/health/*
-    - path: /jwts/accesstoken
-      httpMethods: POST
-    - path: /jwts/keyId
-      httpMethods: POST
-    - path: /jwts/publickeys/*
-      httpMethods: GET
-    - path: /jwts/hmac/*/*
-      httpMethods: POST
+
+permitpath:
+  - path: /api/health/*
+  - path: /jwts/accesstoken
+    httpMethods: POST
+  - path: /jwts/keyId
+    httpMethods: POST
+  - path: /jwts/publickeys/*
+    httpMethods: GET
+  - path: /jwts/hmac/*/*
+    httpMethods: POST
 
 jwt-rest-service-public-key-id: http://localhost:{port}/jwts/publickeys/{keyId}
+hmackeys:
+  - app: '{"clientId":"authentication-rest-service-01","hmacMD5Algorithm":"HmacMD5","secretKey":"mysecret","active":true, "isNew": true}'
+  - app: '{"clientId":"authentication-rest-service-01","hmacMD5Algorithm":"HmacMD5","secretKey":"mysecret","active":true, "isNew": true}'

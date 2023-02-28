@@ -9,6 +9,8 @@ import me.sonam.jwt.json.HmacBody;
 import me.sonam.security.jwt.JwtBody;
 import me.sonam.security.jwt.JwtCreator;
 import me.sonam.security.jwt.PublicKeyJwtCreator;
+import me.sonam.security.jwt.repo.HmacKeyRepository;
+import me.sonam.security.jwt.repo.entity.HmacKey;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,6 +61,9 @@ public class JwtRestServiceTest {
     @MockBean
     private ReactiveJwtDecoder jwtDecoder;
 
+    @Autowired
+    private HmacKeyRepository hmacKeyRepository;
+
     @Test
     public void getJwt() {
         final String clientId = "azudp31223";
@@ -100,6 +105,81 @@ public class JwtRestServiceTest {
         getRestApiKeyId(map.get("token"));
 
         getPublicKey(keyId);
+
+        Mono<Boolean> booleanMono = hmacKeyRepository.existsById("authentication-rest-service");
+        StepVerifier.create(booleanMono).assertNext(aBoolean -> assertThat(aBoolean).isTrue());
+
+        booleanMono = hmacKeyRepository.existsById("authentication-rest-service-");
+        StepVerifier.create(booleanMono).assertNext(aBoolean -> assertThat(aBoolean).isFalse());
+    }
+
+    @Test
+    public void onBehalfOfJwtBodyTest() {
+        //String sub, String scope, String clientId, String aud, String role, String groups, long expiresInSeconds, JwtBody onBehalfOf) {
+        JwtBody onBehalfOf = new JwtBody("user-sub", "user-scope", "user-clientId", "user-aud", "user-role", "user-groups", 300, null);
+        JwtBody jwtBody = new JwtBody("authen-sub", "authen-scope", "authen-clientId", "authen-aud", "authen-role", "authen-groups", 300, onBehalfOf);
+
+        LOG.info("json: {}", PublicKeyJwtCreator.getJson(jwtBody));
+    }
+    @Test
+    public void onBehalfOfJwt() {
+        final String clientId = "azudp31223";
+        final String subject = UUID.randomUUID().toString();
+        final String audience = "email"; //the resource to access
+        final String scopes = "email.write";
+        final String role = "user";
+        final String groups = "email, messaging";
+        final String secretKey = "mysecret";
+
+        final String userJwt = "{\n" +
+                "  \"sub\": \"user-123-43jasd\",\n" +
+                "  \"scope\": \"user-backend\",\n" +
+                "  \"clientId\": \"user-client-1234\",\n" +
+                "  \"aud\": \"backend\",\n" +
+                "  \"role\": \"user\",\n" +
+                "  \"groups\": \"email, manager\",\n" +
+                "  \"expiresInSeconds\": 300\n" +
+                "}\n";
+
+        final String json = "{\n" +
+                "  \"sub\": \"01947sxd184\",\n" +
+                "  \"scope\": \"authentication\",\n" +
+                "  \"clientId\": \"azudp31223\",\n" +
+                "  \"aud\": \"backend\",\n" +
+                "  \"role\": \"user\",\n" +
+                "  \"groups\": \"email, manager\",\n" +
+                "  \"expiresInSeconds\": 300,\n" +
+                " \"userJwt\": "+ userJwt +
+                "}\n";
+
+
+        jwtCreator.generateKey(clientId, secretKey).subscribe(hmacKey1 -> LOG.info("crate a HmacKey: {}", hmacKey1));
+
+        final String hmac = PublicKeyJwtCreator.getHmac(PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name(), json, secretKey);
+
+        EntityExchangeResult<Map> entityExchangeResult = client.post().uri("/jwts/accesstoken")
+                .headers(httpHeaders -> httpHeaders.add(HttpHeaders.AUTHORIZATION, hmac))
+                .bodyValue(json)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange().expectStatus().isOk()
+                .expectBody(Map.class).returnResult();
+
+        Map<String, String> map = entityExchangeResult.getResponseBody();
+        LOG.info("assert token not empty");
+        assertThat(map.get("token")).isNotNull();
+        LOG.info("token: {}", map.get("token"));
+        UUID keyId = getKeyId(map.get("token").toString());
+        LOG.info("keyId: {}", keyId);
+
+        getRestApiKeyId(map.get("token"));
+
+        getPublicKey(keyId);
+
+        Mono<Boolean> booleanMono = hmacKeyRepository.existsById("authentication-rest-service");
+        StepVerifier.create(booleanMono).assertNext(aBoolean -> assertThat(aBoolean).isTrue());
+
+        booleanMono = hmacKeyRepository.existsById("authentication-rest-service-");
+        StepVerifier.create(booleanMono).assertNext(aBoolean -> assertThat(aBoolean).isFalse());
     }
 
     @Test

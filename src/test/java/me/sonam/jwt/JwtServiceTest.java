@@ -51,7 +51,7 @@ public class JwtServiceTest {
 
         jwtCreator.generateKey(clientId, secretKey).subscribe(hmacKey1 -> LOG.info("crate a HmacKey: {}", hmacKey1));
 
-        JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, role, groups, 10);
+        JwtBody jwtBody = new JwtBody(subject, scopes, clientId, audience, role, groups, 10, null);
         final String hmac = PublicKeyJwtCreator.getHmac(PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name(), PublicKeyJwtCreator.getJson(jwtBody), secretKey);
 
         //jwt token validate for 10 days
@@ -72,4 +72,8 @@ public class JwtServiceTest {
        // stringMono.as(StepVerifier::create).expectError(JwtException.class).verify();
     }
 
+    @Test
+    public void createUUID() {
+        LOG.info("uuid: {}", UUID.randomUUID().toString());
+    }
 }

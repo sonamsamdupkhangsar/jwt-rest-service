@@ -53,24 +53,34 @@ public class Handler  {
                         return Mono.error(new JwtException("hmac digest does not match"));
                     }
                     else {
-                        return jwt.create(Mono.just(objects.getT2()));
+                        if (objects.getT2().getUserJwt() != null) {
+                            LOG.info("use userJwt to create access token");
+                            return jwt.create(Mono.just(objects.getT2().getUserJwt()));
+                        }
+                        else {
+                            LOG.info("use client app to create access token");
+                            return jwt.create(Mono.just(objects.getT2()));
+                        }
                     }
                 })
                 .flatMap(s -> ServerResponse.ok()
                             .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(getMap(Pair.of("token", s)))
                 ).onErrorResume(throwable -> {
-                    LOG.trace("create jwt token failed", throwable);
-                    LOG.error("create jwt token failed");
+                    LOG.error("create jwt token failed", throwable);
+                    //LOG.error("create jwt token failed");
                     if (throwable.getMessage().startsWith("Hmac digest is missing")) {
+                        LOG.error("hmac digest is missing");
                         return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(getMap(Pair.of("error", "Hmac digest is missing in the Authorization header")));
                     }
                     if (throwable.getMessage().equals("hmac digest does not match")) {
+                        LOG.error("hmac digest does not match");
                         return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(getMap(Pair.of("error", "hmac digest does not match")));
                     }
                     else {
+                        LOG.error("failed to create jwt token");
                         return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(getMap(Pair.of("error", "failed to create JWT token")));
                     }

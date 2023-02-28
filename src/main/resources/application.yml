@@ -36,14 +36,14 @@ eureka:
       defaultZone: https://${EUREKA_USER}:${EUREKA_PASSWORD}@discovery-service.sonam.cloud/eureka
 
 
-me.sonam.jwt-validator:
-  permitpath:
-    - path: /api/health/*
-    - path: /jwts/accesstoken
-      httpMethods: POST
-    - path: /jwts/keyId
-      httpMethods: POST
-    - path: /jwts/publickeys/*
-      httpMethods: GET
-    - path: /jwts/hmac/*/*
-      httpMethods: POST
+
+permitpath:
+  - path: /api/health/*
+  - path: /jwts/accesstoken
+    httpMethods: POST
+  - path: /jwts/keyId
+    httpMethods: POST
+  - path: /jwts/publickeys/*
+    httpMethods: GET
+  - path: /jwts/hmac/*/*
+    httpMethods: POST
