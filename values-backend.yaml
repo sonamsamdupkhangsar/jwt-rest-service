@@ -107,7 +107,7 @@ secretFiles:
         name: EUREKA_USER
       - key: password
         name: EUREKA_PASSWORD
-  - file: jwt-rest-service-app
+  - file: jwt-rest-service
     keys:
       - key: auth_hmackey
         name: AUTHENTICATION_REST_SERVICE_APP_HMAC_KEY
