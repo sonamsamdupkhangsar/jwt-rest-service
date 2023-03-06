@@ -76,7 +76,7 @@ postgres:
   port: "5432"
   service: jwt-minimal-cluster
   secretfile: sonam.jwt-minimal-cluster.credentials.postgresql.acid.zalan.do
-  dbname: user
+  dbname: jwt
 
 envs:
   - name: DB_SSLMODE
