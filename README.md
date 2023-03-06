@@ -78,3 +78,11 @@ and on another ` mvn pact:verify -Dpactbrokerurl= -Dpactbrokerusername= -Dpactbr
 
 This will publish the provider verification results to pactbroker.
 
+## Secrets ecnryped with SealedSecret
+This project uses SealedSecret to deploy a secret file that is needed by this project.
+The secret-file is in `sealedsecret` folder.  This needs to deploy on a Kubernetes cluster.
+For local development, use the application local profile.
+
+SealedSecret file:
+1. `jwt-rest-service-sealed.yaml` for hmac key initialization.
+ 

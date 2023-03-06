@@ -35,8 +35,6 @@ eureka:
     serviceUrl:
       defaultZone: https://${EUREKA_USER}:${EUREKA_PASSWORD}@discovery-service.sonam.cloud/eureka
 
-
-
 permitpath:
   - path: /api/health/*
   - path: /jwts/accesstoken
@@ -47,3 +45,9 @@ permitpath:
     httpMethods: GET
   - path: /jwts/hmac/*/*
     httpMethods: POST
+
+hmackeys:
+  - app: ${AUTHENTICATION_REST_SERVICE_APP_HMAC_KEY}
+  - app: ${ACCOUNT_REST_SERVICE_APP_HMAC_KEY}
+  - app: ${USER_REST_SERVICE_APP_HMAC_KEY}
+  - app: ${APPLICATION_REST_SERVICE_APP_HMAC_KEY}

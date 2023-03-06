@@ -99,3 +99,21 @@ health:
     initialDelaySeconds: 5
     periodSeconds: 5
     failureThreshold: 5
+
+secretFiles:
+  - file: eureka-discovery
+    keys:
+      - key: user
+        name: EUREKA_USER
+      - key: password
+        name: EUREKA_PASSWORD
+  - file: jwt-rest-service-app
+    keys:
+      - key: auth_hmackey
+        name: AUTHENTICATION_REST_SERVICE_APP_HMAC_KEY
+      - key: account_hmackey
+        name: ACCOUNT_REST_SERVICE_APP_HMAC_KEY
+      - key: user_hmackey
+        name: USER_REST_SERVICE_APP_HMAC_KEY
+      - key: app_hmackey
+        name: APPLICATION_REST_SERVICE_APP_HMAC_KEY
