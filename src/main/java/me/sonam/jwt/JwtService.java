@@ -61,7 +61,6 @@ public class JwtService implements Jwt {
     @Override
     public Mono<String> getKeyId(Mono<String> jwtMono) {
         LOG.info("get keyId from jwt");
-        init();
         return jwtMono.flatMap(jwt -> jwtCreator.getKeyId(jwt));
     }
 
@@ -121,27 +120,5 @@ public class JwtService implements Jwt {
             characters = random.ints(count, 97, 122);
         }
         return characters.mapToObj(data -> (char) data);
-    }
-
-    //@PostConstruct
-    private void init() {
-        LOG.info("initialize hmacKeys.length: {}, \n strings; {}", hmacKeyJson.getHmacKeys().size(), hmacKeyJson.getHmacKeys());
-
-        hmacKeyJson.getHmacKeys().forEach(app -> {
-            LOG.info("jsonString: {}", app.getApp());
-            HmacKey hmacKey = getHmacKeyFromJson(app.getApp());
-            if (hmacKey != null) {
-                hmacKeyRepository.existsById(hmacKey.getId())
-                        .filter(aBoolean ->  {
-                            if (!aBoolean) {
-                                hmacKeyRepository.save(hmacKey).subscribe(hmacKey1 -> LOG.info("Saved hmacKey:{}", hmacKey));
-                            }
-                            else {
-                                LOG.error("hmacKey exists by clientId already");
-                            }
-                            return true;
-                        }).subscribe(aBoolean -> LOG.info("hmac key initiatlization done"));
-            }
-        });
     }
 }

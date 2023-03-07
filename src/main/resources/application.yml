@@ -21,6 +21,8 @@ jwt:
   issuer: ${JWT_ISSUER}
 
 spring:
+  profiles:
+    active: live
   application:
     name: jwt-rest-service
   r2dbc:
