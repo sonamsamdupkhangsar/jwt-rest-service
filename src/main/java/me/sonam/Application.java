@@ -17,7 +17,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @EnableEurekaClient
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"me.sonam.security", "me.sonam"})
 public class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);

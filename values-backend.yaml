@@ -74,26 +74,46 @@ affinity: {}
 
 postgres:
   port: "5432"
-  service: user-minimal-cluster
-  secretfile: sonam-user.user-minimal-cluster.credentials.postgresql.acid.zalan.do
-  dbname: user
+  service: jwt-minimal-cluster
+  secretfile: sonam.jwt-minimal-cluster.credentials.postgresql.acid.zalan.do
+  dbname: jwt
 
 envs:
   - name: DB_SSLMODE
     value: REQUIRE
   - name: JWT_ISSUER
     value: https://www.sonam.cloud/jwts
+  - name: jwt-rest-service-public-key-id
+    value: http://jwt-rest-service.backend.svc.cluster.local:80/jwts/publickeys/{keyId}
 
 health:
   liveness:
     path: /api/health/liveness
     port: 8080
-    initialDelaySeconds: 15
+    initialDelaySeconds: 5
     periodSeconds: 5
     failureThreshold: 5
   readiness:
     path: /api/health/readiness
     port: 8080
-    initialDelaySeconds: 15
+    initialDelaySeconds: 5
     periodSeconds: 5
     failureThreshold: 5
+
+secretFiles:
+  - file: eureka-discovery
+    keys:
+      - key: user
+        name: EUREKA_USER
+      - key: password
+        name: EUREKA_PASSWORD
+  - file: jwt-rest-service
+    keys:
+      - key: auth_hmackey
+        name: AUTHENTICATION_REST_SERVICE_APP_HMAC_KEY
+      - key: account_hmackey
+        name: ACCOUNT_REST_SERVICE_APP_HMAC_KEY
+      - key: user_hmackey
+        name: USER_REST_SERVICE_APP_HMAC_KEY
+      - key: app_hmackey
+        name: APPLICATION_REST_SERVICE_APP_HMAC_KEY

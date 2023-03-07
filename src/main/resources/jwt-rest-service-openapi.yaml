@@ -3,14 +3,20 @@ info:
   title: Jwt rest service Api
   description: This service will issue Jwt claims for a user
   version: "1.0"
+
+
 servers:
   - url: http://localhost:8081
     description: local development jwt-rest-service server
+
 paths:
   /jwts/accesstoken:
     post:
       summary: Returns a JWT access token
-      description: This will return a access token with JWT claim based on the request body.
+      description: "This will return a access token with JWT claim based on the request body.  This is protected with a Authorization
+                header that uses Hmac authentication.  Generate one using the endpoint '/jwts/hmac'"
+      security:
+        - bearerAuth: [ ]
       requestBody:
         content:
           application/json:
@@ -61,7 +67,10 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  error:
+                    type: string
   /jwts/keyId:
     post:
       summary: This is a utility rest api for getting the keyId from the jwt token
@@ -85,9 +94,12 @@ paths:
         '400':
           description: Failed to parse key id from the jwt token
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  error:
+                    type: string
   /jwts/publickeys/{keyId}:
     get:
       summary: Returns the public key associated with the key id
@@ -102,12 +114,113 @@ paths:
         '200':
           description: Successfully returning a public key for this key id
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  key:
+                    type: string
         '400':
           description: Failed to get public key associated with this key id
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  error:
+                    type: string
+  /jwts/hmac/{algorithm}/{key}:
+    post:
+      summary: This endpoint will generate a HMAC digest value given a algorithm, data and secret key
+      parameters:
+        - name: algorithm
+          in: path
+          required: true
+          schema:
+            type: string
+          example: HmacSHA256
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+          example: sonam123
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  type: string
+              example:
+                sub: 01947sxd184
+                scope: authentication
+                clientId: azudp31223
+                aud: backend
+                role: user
+                groups: email, manager
+                expiresInSeconds: 300
+      responses:
+        '200':
+          description: Successfully generate HMAC digest value.
+          content:
+            application/json:
+              schema:
+                properties:
+                  hmac:
+                    type: string
+        '400':
+          description: Failed to generate hmac digest value.
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    type: string
+  /jwts/hmackey/{clientId}:
+    post:
+      summary: "This endpoint is called when a application is saved.  The application saved will call this
+                to create a HmacKey.  This requires a JWT bearer token, not a HMAC token."
+      description: This will generate a hmackey entity in the repository with the clientId.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: clientId
+          required: true
+          in: path
+          schema:
+            type: string
+            example: azudp31223
+      responses:
+        '200':
+          description: HmacKey is created successfully.  HmacKey is retuned in the response.
+          content:
+            application/json:
+              schema:
+                properties:
+                  clientId:
+                    type: string
+                  hmacMD5Algorithm:
+                    type: string
+                  secretKey:
+                    type: string
+              example:
+                clientId: azudp31223
+                hmacMD5Algorithm: HmacSHA256
+                secretKey: 1234secret
+        '400':
+          description: Failed to create HmacKey.
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    type: string
+                    example: Bad clientId.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: HMAC

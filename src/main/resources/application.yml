@@ -2,7 +2,7 @@ logging:
   level:
     root: error
     me:
-      sonam: debug
+      sonam: info
 info:
   app:
     name: Springboot me.sonam.Application
@@ -21,6 +21,8 @@ jwt:
   issuer: ${JWT_ISSUER}
 
 spring:
+  profiles:
+    active: live
   application:
     name: jwt-rest-service
   r2dbc:
@@ -34,3 +36,20 @@ eureka:
   client:
     serviceUrl:
       defaultZone: https://${EUREKA_USER}:${EUREKA_PASSWORD}@discovery-service.sonam.cloud/eureka
+
+permitpath:
+  - path: /api/health/*
+  - path: /jwts/accesstoken
+    httpMethods: POST
+  - path: /jwts/keyId
+    httpMethods: POST
+  - path: /jwts/publickeys/*
+    httpMethods: GET
+  - path: /jwts/hmac/*/*
+    httpMethods: POST
+
+hmackeys:
+  - app: ${AUTHENTICATION_REST_SERVICE_APP_HMAC_KEY}
+  - app: ${ACCOUNT_REST_SERVICE_APP_HMAC_KEY}
+  - app: ${USER_REST_SERVICE_APP_HMAC_KEY}
+  - app: ${APPLICATION_REST_SERVICE_APP_HMAC_KEY}
