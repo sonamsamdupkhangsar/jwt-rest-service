@@ -53,3 +53,7 @@ hmackeys:
   - app: ${ACCOUNT_REST_SERVICE_APP_HMAC_KEY}
   - app: ${USER_REST_SERVICE_APP_HMAC_KEY}
   - app: ${APPLICATION_REST_SERVICE_APP_HMAC_KEY}
+
+jwt-service:
+  root: ${JWT_REST_SERVICE}
+  public-key-id: /jwts/publickeys/{keyId}

@@ -15,11 +15,7 @@ eureka:
 jwt:
   issuer: https://www.sonam.cloud/jwts
 
-# jwt-rest-service on port 8081 local server
-#jwt-rest-service-public-key-id: http://localhost:8081/jwts/publickeys/{keyId}
-jwt-service:
-  root: http://localhost:${server.port}
-  public-key-id: /jwts/publickeys/{keyId}
+JWT_REST_SERVICE: http://localhost:${server.port}
 
 hmackeys:
   - app: '{"clientId":"authentication-rest-service","algorithm":"HmacMD5","secretKey":"51029d888xYA$","active":true, "isNew": true}'
