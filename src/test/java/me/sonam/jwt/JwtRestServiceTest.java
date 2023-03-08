@@ -235,7 +235,7 @@ public class JwtRestServiceTest {
                 headers(addJwt(jwt)).exchange().expectStatus().isOk().expectBody(Map.class).returnResult();
         LOG.info("result: {}", result.getResponseBody());
 
-        assertThat(result.getResponseBody().get("hmacMD5Algorithm")).isEqualTo(PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name());
+        assertThat(result.getResponseBody().get("algorithm")).isEqualTo(PublicKeyJwtCreator.Md5Algorithm.HmacSHA256.name());
         assertThat(result.getResponseBody().get("clientId")).isEqualTo("1234-client");
         assertThat(result.getResponseBody().get("secretKey")).isNotNull();
 

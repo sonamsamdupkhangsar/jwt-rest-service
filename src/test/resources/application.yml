@@ -49,7 +49,11 @@ permitpath:
   - path: /jwts/hmac/*/*
     httpMethods: POST
 
-jwt-rest-service-public-key-id: http://localhost:{port}/jwts/publickeys/{keyId}
+jwt-service:
+  root: http://localhost:${server.port}
+  public-key-id: /jwts/publickeys/{keyId}
+
+
 hmackeys:
-  - app: '{"clientId":"authentication-rest-service-01","hmacMD5Algorithm":"HmacMD5","secretKey":"mysecret","active":true, "isNew": true}'
-  - app: '{"clientId":"authentication-rest-service-01","hmacMD5Algorithm":"HmacMD5","secretKey":"mysecret","active":true, "isNew": true}'
+  - app: '{"clientId":"authentication-rest-service-01","algorithm":"HmacMD5","secretKey":"mysecret","active":true, "isNew": true}'
+  - app: '{"clientId":"authentication-rest-service-01","algorithm":"HmacMD5","secretKey":"mysecret","active":true, "isNew": true}'

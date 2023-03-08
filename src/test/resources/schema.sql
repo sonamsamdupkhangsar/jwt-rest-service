@@ -1,2 +1,2 @@
 CREATE TABLE if not exists Jwt_Key (id UUID PRIMARY KEY, private_key varchar, public_key varchar, revoked boolean);
-create table if not exists Hmac_key(client_id varchar primary key, secret_key varchar, hmac_MD5_Algorithm varchar, active boolean);
+create table if not exists Hmac_key(client_id varchar primary key, secret_key varchar, algorithm varchar, active boolean);
