@@ -1,11 +1,9 @@
 package me.sonam.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.sonam.jwt.json.HmacBody;
 import me.sonam.security.jwt.JwtBody;
 import me.sonam.security.jwt.JwtCreator;
 import me.sonam.security.jwt.JwtException;
-import me.sonam.security.jwt.PublicKeyJwtCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

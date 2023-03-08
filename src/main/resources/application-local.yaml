@@ -16,10 +16,13 @@ jwt:
   issuer: https://www.sonam.cloud/jwts
 
 # jwt-rest-service on port 8081 local server
-jwt-rest-service-public-key-id: http://localhost:8081/jwts/publickeys/{keyId}
+#jwt-rest-service-public-key-id: http://localhost:8081/jwts/publickeys/{keyId}
+jwt-service:
+  root: http://localhost:${server.port}
+  public-key-id: /jwts/publickeys/{keyId}
 
 hmackeys:
-  - app: '{"clientId":"authentication-rest-service","hmacMD5Algorithm":"HmacMD5","secretKey":"51029d888xYA$","active":true, "isNew": true}'
-  - app: '{"clientId":"account-rest-service","hmacMD5Algorithm":"HmacMD5","secretKey":"51029d881xYA$","active":true, "isNew": true}'
-  - app: '{"clientId":"user-rest-service","hmacMD5Algorithm":"HmacMD5","secretKey":"51029d888AYA$","active":true, "isNew": true}'
-  - app: '{"clientId":"application-rest-service","hmacMD5Algorithm":"HmacMD5","secretKey":"51629d888xYA$","active":true, "isNew": true}'
+  - app: '{"clientId":"authentication-rest-service","algorithm":"HmacMD5","secretKey":"51029d888xYA$","active":true, "isNew": true}'
+  - app: '{"clientId":"account-rest-service","algorithm":"HmacMD5","secretKey":"51029d881xYA$","active":true, "isNew": true}'
+  - app: '{"clientId":"user-rest-service","algorithm":"HmacMD5","secretKey":"51029d888AYA$","active":true, "isNew": true}'
+  - app: '{"clientId":"application-rest-service","algorithm":"HmacMD5","secretKey":"51629d888xYA$","active":true, "isNew": true}'
