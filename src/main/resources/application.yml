@@ -35,7 +35,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: https://${EUREKA_USER}:${EUREKA_PASSWORD}@discovery-service.sonam.cloud/eureka
+      defaultZone: ${DEFAULT_ZONE}
 
 permitpath:
   - path: /api/health/*

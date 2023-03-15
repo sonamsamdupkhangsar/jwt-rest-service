@@ -85,6 +85,9 @@ envs:
     value: https://www.sonam.cloud/jwts
   - name: JWT_REST_SERVICE
     value: http://jwt-rest-service.backend.svc.cluster.local:80
+  - name: DEFAULT_ZONE
+    value: https://${EUREKA_USER}:${EUREKA_PASSWORD}@${EUREKA_HOST}/eureka
+
 
 health:
   liveness:
