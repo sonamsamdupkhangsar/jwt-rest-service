@@ -81,6 +81,8 @@ postgres:
 envs:
   - name: DB_SSLMODE
     value: REQUIRE
+  - name: EUREKA_HOST
+    value: discovery-service.sonam.cloud
   - name: JWT_ISSUER
     value: https://www.sonam.cloud/jwts
   - name: JWT_REST_SERVICE
