@@ -21,7 +21,7 @@ DEFAULT_ZONE: http://${EUREKA_USER}:${EUREKA_PASSWORD}@${EUREKA_HOST}/eureka
 jwt:
   issuer: https://www.sonam.cloud/jwts
 
-JWT_REST_SERVICE: http://localhost:${server.port}
+JWT_REST_SERVICE: http://jwt-rest-service
 
 hmackeys:
   - app: '{"clientId":"authentication-rest-service","algorithm":"HmacMD5","secretKey":"51029d888xYA$","active":true, "isNew": true}'
